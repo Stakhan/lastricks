@@ -1,8 +1,13 @@
-import unittest
+import sys
 import laspy
+import unittest
 from pathlib import Path
 import geopandas as gpd
 from shapely.geometry import Polygon, Point
+
+sys.path.append('../')
+from lastricks.tools import new_class_from_gpkg
+
 
 class Testhelpers(unittest.TestCase):
 
@@ -25,7 +30,17 @@ class Testhelpers(unittest.TestCase):
         self.assertEqual(len(d.geometry.apply(p.within).index), 1)
 
     def test_new_class_from_gpkg(self):
-        pass
+        a = new_class_from_gpkg(
+            "mock.gpkg",
+            "mock.las",
+            1,
+            8,
+            output_folder=Path.cwd(),
+            output_suffix="_wec"
+        )
+
+        res_lasfile = laspy.file.File(Path.cwd()/"mock_wec.las", mode="r")
+        self.assertEqual(res_lasfile.classification[0], 8)
 
 #    def tearDown(self):
 #        (Path.cwd() / "mock.las").unlink()
