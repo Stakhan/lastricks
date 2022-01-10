@@ -7,7 +7,7 @@ import geopandas as gpd
 from shapely.geometry import Polygon, Point
 
 sys.path.append('..')
-import lastricks.tools as ltt
+import lastricks as lt
 
 
 class Testhelpers(unittest.TestCase):
@@ -31,7 +31,7 @@ class Testhelpers(unittest.TestCase):
         self.assertEqual(len(d.geometry.apply(p.within).index), 1)
 
     def test_new_class_from_gpkg(self):
-        ltt.new_class_from_gpkg(
+        lt.new_class_from_gpkg(
             "mock.gpkg",
             "mock2.las",
             1,
