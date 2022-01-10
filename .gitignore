@@ -1,3 +1,4 @@
 test/mock.gpkg
 test/mock.las
-__pycache__
+lastricks/__pycache__
+__pycache__/
