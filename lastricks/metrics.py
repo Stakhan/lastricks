@@ -9,7 +9,7 @@ class Metrics:
         if labels:
             assert len(labels) == self.number_of_labels
             self.range_to_labels = {i:l for i, l in enumerate(labels)} 
-
+    
     def get_TP(self, c):
         """returns true positives for class c"""
         return self.confusion_matrix[c,c]
@@ -51,7 +51,7 @@ class Metrics:
         
         for c in metrics_table.columns:
             if c in df.columns:
-               # Compute Precision, Recall, F1-score, IoU 
+                pass # Compute Precision, Recall, F1-score, IoU 
         
         metrics_table.rename(columns=self.range_to_labels)
 
