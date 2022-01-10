@@ -35,26 +35,25 @@ def new_class_from_gpkg(
     modified_classif = lasfile.classification
 
     pool = mp.ProcessPool(processes=mp.cpu_count())
-    print("Launching parallel process")
-    within_mask = pool.map(partial(is_within_worker, polygons=polygons), points)
     print("Running parallel process...")
-    pool.close()
+    within_mask = pool.map(partial(is_within_worker, polygons=polygons), points)
+    print("Done.")
 
     modified_classif[ pts_idxs[within_mask] ] = new_class
 
     # Managing output folder
     if not output_folder:
-        self.output_folder = Path(lasfile.filename).parent
+        output_folder = Path(lasfile.filename).parent
     else:
-        self.output_folder = output_folder
+        output_folder = output_folder
     
     # Mananging output suffix 
     if (Path(output_folder) / las_filename).exists() and not output_suffix:
-        self.output_suffix =  "_new_class"
+        output_suffix =  "_new_class"
     elif not output_suffix:
-        self.output_suffix = ''
+        output_suffix = ''
     else:
-        self.output_suffix = output_suffix
+        output_suffix = output_suffix
     
     print(f"Saving result to {output_folder / (Path(las_filename).stem+output_suffix+Path(las_filename).suffix)}")
     output_lasfile = laspy.file.File(
@@ -65,3 +64,5 @@ def new_class_from_gpkg(
     output_lasfile.points = lasfile.points
     output_lasfile.classification = modified_classif
     output_lasfile.close()
+
+    lasfile.close()
