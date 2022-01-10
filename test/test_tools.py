@@ -6,9 +6,10 @@ from pathlib import Path
 import geopandas as gpd
 from shapely.geometry import Polygon, Point
 
-sys.path.append('..')
-import lastricks as lt
+root_path = Path(__file__).parent.resolve()
 
+sys.path.insert(0, str(root_path.parent))
+import lastricks as lt
 
 class Testhelpers(unittest.TestCase):
 
@@ -22,24 +23,24 @@ class Testhelpers(unittest.TestCase):
     #     mock_las.close()
 
         df = gpd.GeoDataFrame(geometry=[ Polygon([(0.5, 0.5), (0, 2), (2, 1)]) ])
-        df.to_file("mock.gpkg", driver="GPKG")
+        df.to_file(root_path / "mock.gpkg", driver="GPKG")
     
     def test_setUp(self):
-        lasfile = laspy.file.File("mock2.las")
-        d = gpd.read_file("mock.gpkg")
+        lasfile = laspy.file.File(root_path / "mock2.las")
+        d = gpd.read_file(root_path / "mock.gpkg")
         p =  Point(lasfile.x[0], lasfile.y[0])
         self.assertEqual(len(d.geometry.apply(p.within).index), 1)
 
     def test_new_class_from_gpkg(self):
         lt.new_class_from_gpkg(
-            "mock.gpkg",
-            "mock2.las",
+            root_path / "mock.gpkg",
+            root_path / "mock2.las",
             1,
             8,
-            output_folder=Path.cwd(),
+            output_folder=root_path,
             output_suffix="_wec",
             )
-        res_lasfile = laspy.file.File(Path.cwd()/"mock2_wec.las", mode="r")
+        res_lasfile = laspy.file.File(root_path / "mock2_wec.las", mode="r")
         self.assertEqual(res_lasfile.classification[0], 8)
 
 
