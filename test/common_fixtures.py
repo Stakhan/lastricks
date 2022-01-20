@@ -27,9 +27,14 @@ def mock_las(tmp_path):
     Xmin = np.floor(np.min(allX))
     Ymin = np.floor(np.min(allY))
     Zmin = np.floor(np.min(allZ))
+    Xmax = np.ceil(np.max(allX))
+    Ymax = np.ceil(np.max(allY))
+    Zmax = np.ceil(np.max(allZ))
 
     test_las.header.offset = [Xmin,Ymin,Zmin]
     test_las.header.scale = [0.001,0.001,0.001]
+    test_las.header.min = [Xmax,Ymax,Zmax]
+    test_las.header.max = [Xmax,Ymax,Zmax]
 
     test_las.X = allX
     test_las.Y = allY
@@ -42,6 +47,28 @@ def mock_las(tmp_path):
     yield filename
 
     shutil.rmtree(filename, ignore_errors=True)
+
+@pytest.fixture
+def folder_mock_las(mock_las):
+    """Generates a folder containing several copies of a mock LAS file.
+
+    Args:
+        mock_las (pytest.fixture): the `common_fixtures.mock_las`  fixture
+
+    Returns:
+        pathlib.Path: path to the generated folder
+    """
+    mock_folder = mock_las.parent / 'mock_folder'
+    mock_folder.mkdir(exist_ok=True)
+    for i in range(3):
+        shutil.copy(mock_las, mock_folder / f'mock_{i}.las')
+        lasfile = laspy.file.File(mock_folder / f'mock_{i}.las', mode='rw')
+        lasfile.X += i*5000
+        lasfile.close()
+    
+    yield mock_folder
+
+    shutil.rmtree(mock_folder, ignore_errors=True)
 
 @pytest.fixture
 def mock_gpkg(tmp_path):
