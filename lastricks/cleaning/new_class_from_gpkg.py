@@ -35,7 +35,7 @@ def new_class_from_gpkg(
     polygons = gpd.read_file(gpkg_filename)
     
     if las_path.is_file():
-        process_single_file(
+        new_class_from_gpkg_single_file(
             polygons,
             las_path,
             base_class,
@@ -49,7 +49,7 @@ def new_class_from_gpkg(
         for i,path in enumerate(las_paths):
             startt = time.time()
             print(f"[{i+1}/{len(las_paths)}]")
-            process_single_file(
+            new_class_from_gpkg_single_file(
                 polygons,
                 path,
                 base_class,
@@ -61,7 +61,7 @@ def new_class_from_gpkg(
             print(f"-- Processing time: {timedelta(seconds=time.time()-startt)}")
 
 
-def process_single_file(
+def new_class_from_gpkg_single_file(
     polygons,
     las_filename,
     base_class,
