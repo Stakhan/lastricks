@@ -1,6 +1,7 @@
 import laspy
 import pytest
 import shutil
+import rasterio
 import numpy as np
 from pathlib import Path
 import geopandas as gpd
@@ -20,9 +21,9 @@ def mock_las(tmp_path):
     (tmp_path / "test_data").mkdir(exist_ok=True)
 
     test_las = laspy.file.File(filename, mode="w", header=laspy.header.Header())
-    allX = np.array([1, 2000, 3000, 5000, 6000])
-    allY = np.array([1000, 0, 0, 2000, 2000])
-    allZ = np.array([10.0, 10.0, 11.0, 9.0, 12.0])
+    allX = np.array([1, 2000, 3000, 5000, 6000, 6000])
+    allY = np.array([1000, 0, 0, 2000, 2000, 3000])
+    allZ = np.array([1001, 2000, 55000, 27000, 8000, 9000])
 
     Xmin = np.floor(np.min(allX))
     Ymin = np.floor(np.min(allY))
@@ -40,13 +41,14 @@ def mock_las(tmp_path):
     test_las.Y = allY
     test_las.Z = allZ
 
-    test_las.classification = [1, 1, 2, 2, 1]
+    test_las.classification = [1, 1, 2, 2, 1, 1]
 
     test_las.close()
 
     yield filename
 
     shutil.rmtree(filename, ignore_errors=True)
+
 
 @pytest.fixture
 def folder_mock_las(mock_las):

@@ -10,7 +10,7 @@ root_path = Path(__file__).parent.resolve()
 
 sys.path.insert(0, str(root_path.parent))
 import lastricks as lt
-from .common_fixtures import mock_las, mock_gpkg, folder_mock_las
+from .common_fixtures import mock_las, mock_gpkg, folder_mock_las, mock_dtm
  
     
 def test_mock_files(mock_las, mock_gpkg):
@@ -63,3 +63,4 @@ def test_new_class_from_gpkg_revert_mask(mock_las, mock_gpkg):
     res_lasfile = laspy.file.File(mock_las.parent / "mock_wec.las", mode="r")
     assert res_lasfile.classification[1] == 9
     assert res_lasfile.classification[4] == 9
+
