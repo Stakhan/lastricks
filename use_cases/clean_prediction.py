@@ -11,7 +11,7 @@ from datetime import timedelta
 
 start_time = time.time()
 
-gpkg_path = Path('data/top10nl_water_db_buffered.gpkg')
+gpkg_path = Path('data/top10nl_water_db_buffered_v2.gpkg')
 
 lases_path = Path('/home/eal/Documents/tp3d/torch-points3d-eurosense/data/ahn4clust-dsb1-wc/predicted/pred_100sqkm_sample_zone_N654')
 
@@ -20,7 +20,7 @@ new_class_from_gpkg(
     lases_path,
     9,
     1,
-    output_folder=Path('/home/eal/Documents/tp3d/torch-points3d-eurosense/data/ahn4clust-dsb1-wc/predicted/pred_100sqkm_sample_zone_N654_cleaned'),
+    output_folder=Path('/home/eal/Documents/tp3d/torch-points3d-eurosense/data/ahn4clust-dsb1-wc/predicted/pred_100sqkm_sample_zone_N654_cleaned_v2'),
     output_suffix='_cleaned',
     gpkg_as_mask=False
     )
