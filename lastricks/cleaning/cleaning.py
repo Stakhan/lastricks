@@ -36,20 +36,22 @@ class Cleaner:
         print("Cleaner object created with following CleaningProcess:\n--> "+'\n--> '.join([str(cp) for cp in cleaning_pipeline])+'\n')
 
         # Managing output folder
-        if not output_folder and input_path.is_file():
-            self.output_folder = input_path.parent
-            input_folder = input_path.parent
-        elif not output_folder and input_path.is_dir():
-            self.output_folder = input_path
-            input_folder = input_path
-        elif output_folder:
+        if input_path.is_file():
+            self.input_folder = input_path.parent
+            if not output_folder:
+                self.output_folder = input_path.parent
+        elif self.input_path.is_dir():
+            self.input_folder = input_path
+            if not output_folder:
+                self.output_folder = input_path
+        if output_folder:
             output_folder = Path(output_folder)
             assert output_folder.exists()
             self.output_folder = output_folder
-        print('compare', input_folder, '\n',self.output_folder)
+            
         
         # Managing output suffix
-        if not output_suffix and input_folder == output_folder:
+        if not output_suffix and self.input_folder == self.output_folder:
             self.output_suffix =  "_cleaned"
         elif not output_suffix:
             self.output_suffix = ''
@@ -76,9 +78,8 @@ class Cleaner:
 
         if self.input_path.is_file():
             las_paths = [self.input_path]  
-
-        elif input_path.is_dir():
-            las_paths = [p for p in las_path.iterdir() if p.is_file() and p.suffix in ['.las', '.laz']]
+        elif self.input_path.is_dir():
+            las_paths = [p for p in self.input_path.iterdir() if p.is_file() and p.suffix in ['.las', '.laz']]
         
         for i,path in enumerate(las_paths):
             startt = time.time()
@@ -87,7 +88,6 @@ class Cleaner:
             
             las = laspy.read(path)
             las = self.apply_pipeline(las)
-            print('output_suffix', self.output_suffix)
             outlas_path = self.output_folder / (path.stem+self.output_suffix+path.suffix)
             print(f"Writting to {outlas_path}")
             las.write( outlas_path )
@@ -109,4 +109,4 @@ class CleaningProcess:
         raise NotImplementedError
     
     def __str__(self):
-        return f"{type(self).__name__}({self.__dict__})" 
+        return f"{type(self).__name__}({self.__dict__})"

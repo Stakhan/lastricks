@@ -65,9 +65,9 @@ def folder_mock_las_v2(mock_las_v2):
     mock_folder.mkdir(exist_ok=True)
     for i in range(3):
         shutil.copy(mock_las_v2, mock_folder / f'mock_{i}.las')
-        lasfile = laspy.file.File(mock_folder / f'mock_{i}.las', mode='rw')
+        lasfile = laspy.read(mock_folder / f'mock_{i}.las')
         lasfile.X += i*5000
-        lasfile.close()
+        lasfile.write(mock_folder / f'mock_{i}.las')
     
     yield mock_folder
 
