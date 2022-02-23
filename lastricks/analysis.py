@@ -1,5 +1,4 @@
-from sklearn.metrics import confusion_matrix
-import numpy as np
+
 
 
 def metrics_subcloud(
@@ -19,7 +18,3 @@ def metrics_subcloud(
     Returns:
         pandas.DataFrame
     """
-
-    pass
-
-def 

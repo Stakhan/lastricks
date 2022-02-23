@@ -1,11 +1,12 @@
 import sklearn
+import numpy as np
 
 class Metrics:
 
     def __init__(self, ground_truth, prediction, labels=None):
         self.confusion_matrix = sklearn.metrics.confusion_matrix(ground_truth, prediction, labels=labels)
         self.number_of_labels = self.confusion_matrix.shape[0]
-        
+        self.tn, self.fp, self.fn, self.tp = self.confusion_matrix.ravel()
         if labels:
             assert len(labels) == self.number_of_labels
             self.range_to_labels = {i:l for i, l in enumerate(labels)} 
