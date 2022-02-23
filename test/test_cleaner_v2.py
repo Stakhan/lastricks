@@ -102,3 +102,9 @@ def test_cleaner_dir_default(
     for i in range(3):
         expected_output = (folder_mock_las_v2 / f"mock_{i}.las")
         assert expected_output.exists()
+
+def test_cleaningprocess(mock_las_v2):
+    cp = ltc.CleaningProcess()
+    las = laspy.read(mock_las_v2)
+    with pytest.raises(NotImplementedError) as e_info:
+        cp(las)

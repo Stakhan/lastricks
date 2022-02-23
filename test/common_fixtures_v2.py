@@ -31,7 +31,7 @@ def mock_las_v2(tmp_path):
     Zmax = np.ceil(np.max(allZ))
 
     mock_hdr = laspy.LasHeader(version="1.2", point_format=1)
-    mock_hdr.offsets = [Xmin,Ymin,Zmin]
+    mock_hdr.offsets = [0.0,0.0,0.0]
     mock_hdr.scales = [0.001,0.001,0.001]
     mock_hdr.mins = [Xmax,Ymax,Zmax]
     mock_hdr.maxs = [Xmax,Ymax,Zmax]
@@ -42,7 +42,7 @@ def mock_las_v2(tmp_path):
     mock_las.Y = allY
     mock_las.Z = allZ
 
-    mock_las.classification = [1, 1, 2, 2, 1, 1]
+    mock_las.classification = [1, 1, 9, 9, 1, 1]
 
     mock_las.write(filename)
 
@@ -76,8 +76,8 @@ def folder_mock_las_v2(mock_las_v2):
 
 @pytest.fixture
 def mock_dtm(tmp_path):
-    x = np.linspace(1, 6000, 8)
-    y = np.linspace(1000, 3000, 3)
+    x = np.linspace(1, 6, 8)
+    y = np.linspace(1, 3, 3)
     X, Y = np.meshgrid(x, y)
     Z = X + Y
 
