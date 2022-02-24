@@ -2,8 +2,10 @@ import laspy
 import shutil
 import pytest
 import rasterio
+import warnings
 import numpy as np
-
+import geopandas as gpd
+from shapely.geometry import Polygon
 """
 These fixtures are similar to the ones in
 `test.common_fixtures` but they use laspy 2.x
@@ -19,7 +21,7 @@ def mock_las_v2(tmp_path):
     filename = tmp_path / "test_data" / "mock.las"
     (tmp_path / "test_data").mkdir(exist_ok=True)
 
-    allX = np.array([1, 2000, 3000, 5000, 6000, 6000])
+    allX = np.array([500, 2000, 3000, 5000, 6000, 6000])
     allY = np.array([1000, 0, 0, 2000, 2000, 3000])
     allZ = np.array([1001, 2000, 55000, 27000, 8000, 9000])
 
@@ -73,6 +75,24 @@ def folder_mock_las_v2(mock_las_v2):
 
     shutil.rmtree(mock_folder, ignore_errors=True)
 
+@pytest.fixture
+def mock_gpkg(tmp_path):
+    """Generates a small mock GeoPackage file.
+
+    Yields:
+        pathlib.Path: path to generated GeoPackage file
+    """
+    filename = tmp_path / "test_data" / "mock.gpkg"
+    (tmp_path / "test_data").mkdir(exist_ok=True)
+
+    df = gpd.GeoDataFrame(geometry=[ Polygon([(0.5, 0.5), (0.0, 2.0), (2.0, 1.0)]) ])
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        df.to_file(filename, driver="GPKG")
+
+    yield filename
+
+    shutil.rmtree(filename, ignore_errors=True)
 
 @pytest.fixture
 def mock_dtm(tmp_path):

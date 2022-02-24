@@ -9,6 +9,7 @@ from functools import partial
 from datetime import timedelta
 import pathos.multiprocessing as mp
 from shapely.geometry import Polygon
+from .cleaning import CleaningProcess
 
 
 def is_within_worker(point, polygons, gpkg_as_mask=True):
@@ -18,106 +19,90 @@ def is_within_worker(point, polygons, gpkg_as_mask=True):
     else:
         return len(within_list.index) == 0
 
-def new_class_from_gpkg(
-    gpkg_filename,
-    las_path,
-    base_class,
-    new_class,
-    output_folder=None,
-    output_suffix=None,
-    gpkg_as_mask=True
-):
-    """Generates a new class based on an existing class and a set of polygons
-       or multipolygons. If points from `base_class` are within the given
-       geometries, they are assigned the `new_class`.
-    """
-    print(f"Opening {gpkg_filename}...")
-    polygons = gpd.read_file(gpkg_filename)
-    
-    if las_path.is_file():
-        new_class_from_gpkg_single_file(
-            polygons,
-            las_path,
-            base_class,
-            new_class,
-            output_folder=output_folder,
-            output_suffix=output_suffix,
-            gpkg_as_mask=gpkg_as_mask
-        )
-    elif las_path.is_dir():
-        las_paths = [p for p in las_path.iterdir() if p.is_file() and p.suffix == '.las']
-        for i,path in enumerate(las_paths):
-            startt = time.time()
-            print(f"[{i+1}/{len(las_paths)}]")
-            new_class_from_gpkg_single_file(
-                polygons,
-                path,
-                base_class,
-                new_class,
-                output_folder=output_folder,
-                output_suffix=output_suffix,
-                gpkg_as_mask=gpkg_as_mask
+class NewClassFromGpkg(CleaningProcess):
+    def __init__(
+        self,
+        gpkg,
+        base_class,
+        new_class,
+        gpkg_as_mask=True
+    ):
+        """Generates a new class based on an existing class and a set of polygons
+        or multipolygons (provided as GeoPackage). If points from `base_class` are within the given
+        geometries, they are assigned the `new_class`.
+
+        Args:
+            gpkg (str or pathlib.Path): GeoPackage containing a set of polygons
+                that will serve as mask.
+            base_class (int): class number of base class
+            new_class (int): class number of new class
+            gpkg_as_mask (bool, optional): When True, points from `base_class`
+                inside the given geometries are assigned the `new_class`; when
+                False, it is the points outside the given geometries that are
+                assigned the `new_class`. Defaults to True.
+
+        Raises:
+            TypeError: when gpkg_filename is not provided in a sound manner.
+        """
+        if isinstance(gpkg, str) or isinstance(gpkg, Path):
+                print(f"Opening {gpkg}...")
+                self.polygons = gpd.read_file(gpkg)
+        else:
+            raise TypeError(f"gpkg should be a str or a pathlib.Path but got {type(gpkg).__name__} ")
+
+        self.base_class   = base_class
+        self.new_class    = new_class
+        self.gpkg_as_mask = gpkg_as_mask
+
+
+    def __call__(self, las):
+        """Process a single python representation of a LAS/LAZ file.
+
+        Args:
+            las (laspy.LasData): LAS/LAZ file representation to process
+
+        Returns:
+            laspy.LasData: the resulting representation
+        """  
+        base_class_mask = np.array(las.classification) == self.base_class
+        points_coords = pd.DataFrame(
+            data={
+                'x': np.array(las.x)[base_class_mask],
+                'y': np.array(las.y)[base_class_mask]
+                }
             )
-            print(f"-- Processing time: {timedelta(seconds=time.time()-startt)}")
+        
+        las_hold = Polygon([
+            (las.header.mins[0], las.header.mins[1]),
+            (las.header.maxs[0], las.header.mins[1]),
+            (las.header.maxs[0], las.header.maxs[1]),
+            (las.header.mins[0], las.header.maxs[1])
+            ])
 
+        zone_mask = self.polygons.geometry.apply(las_hold.intersects)
 
-def new_class_from_gpkg_single_file(
-    polygons,
-    las_filename,
-    base_class,
-    new_class,
-    output_folder=None,
-    output_suffix=None,
-    gpkg_as_mask=True
-):  
-    lasfile = laspy.file.File(las_filename, mode='r')
-    lasheader = lasfile.header
+        points = gpd.points_from_xy(
+            points_coords.x,
+            points_coords.y,
+            crs=self.polygons.crs.srs
+            )
+        pts_idxs = np.where(base_class_mask)[0]
+        modified_classif = np.array(las.classification)
 
-    base_class_mask = lasfile.classification == base_class
-    points_coords = pd.DataFrame(data={'x': lasfile.x[base_class_mask], 'y': lasfile.y[base_class_mask]})
-    
-    lasfile_hold = Polygon([
-        (lasheader.min[0], lasheader.min[1]),
-        (lasheader.max[0], lasheader.min[1]),
-        (lasheader.max[0], lasheader.max[1]),
-        (lasheader.min[0], lasheader.max[1])
-        ])
+        pool = mp.ProcessPool(processes=mp.cpu_count())
+        print("Running parallel process...")
+        within_mask = pool.map(
+            partial(
+                is_within_worker,
+                polygons=self.polygons[zone_mask],
+                gpkg_as_mask=self.gpkg_as_mask
+                ),
+            points
+        )
+        print("Done.")
 
-    zone_mask = polygons.geometry.apply(lasfile_hold.intersects)
-
-    points = gpd.points_from_xy(points_coords.x, points_coords.y, crs="EPSG:28992")
-    pts_idxs = np.where(base_class_mask)[0]
-    modified_classif = lasfile.classification
-
-    pool = mp.ProcessPool(processes=mp.cpu_count())
-    print("Running parallel process...")
-    within_mask = pool.map(partial(is_within_worker, polygons=polygons[zone_mask], gpkg_as_mask=gpkg_as_mask), points)
-    print("Done.")
-
-    modified_classif[ pts_idxs[within_mask] ] = new_class
-
-    # Managing output folder
-    if not output_folder:
-        output_folder = Path(lasfile.filename).parent
-    else:
-        output_folder = output_folder
-    
-    # Managing output suffix 
-    if (Path(output_folder) / las_filename).exists() and not output_suffix:
-        output_suffix =  "_new_class"
-    elif not output_suffix:
-        output_suffix = ''
-    else:
-        output_suffix = output_suffix
-    
-    print(f"Saving result to {output_folder / (Path(las_filename).stem+output_suffix+Path(las_filename).suffix)}")
-    output_lasfile = laspy.file.File(
-        output_folder / (Path(las_filename).stem+output_suffix+Path(las_filename).suffix),
-        mode = "w",
-        header = lasfile.header
-    )
-    output_lasfile.points = lasfile.points
-    output_lasfile.classification = modified_classif
-    output_lasfile.close()
-
-    lasfile.close()
+        modified_classif[ pts_idxs[within_mask] ] = self.new_class
+        
+        las.classification = modified_classif
+        
+        return las
