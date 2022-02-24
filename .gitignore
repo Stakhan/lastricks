@@ -2,3 +2,4 @@ test/mock.gpkg
 test/mock2_wec.las
 lastricks/__pycache__
 __pycache__/
+use_cases/data
