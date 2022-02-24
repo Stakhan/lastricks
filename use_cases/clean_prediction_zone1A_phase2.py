@@ -7,12 +7,6 @@ sys.path.append('..')
 from lastricks.cleaning import Cleaner, ReclassifyAbove
 
 cleaning_pipeline = [
-    NewClassFromGpkg(
-    r"/mnt/share/00 Lidar - AI/Input data/07_TOP10NL_WATER_DB/top10nl_water_db_buffered_v2.gpkg",
-    9,
-    1,
-    gpkg_as_mask=False
-    ),
     ReclassifyAbove(
         r"/mnt/share/00 Lidar - AI/Input data/09_DTM20m_Netherlands/Netherlands_DTM_20m.tif",
         9,
