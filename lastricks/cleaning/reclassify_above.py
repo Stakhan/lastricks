@@ -63,7 +63,7 @@ class ReclassifyAbove(CleaningProcess):
         base_class_idxs = np.where(base_class_mask)[0]
 
         dtm_aoi = self.crop_dtm_to_aoi(las)
-        print('base_class_z', base_class_z)
+
        # Adjusting z values based on DTM 
         for i in range( len(base_class_z) ):
             px, py = dtm_aoi.index(las.x[i], las.y[i])
