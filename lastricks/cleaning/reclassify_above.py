@@ -31,7 +31,7 @@ class ReclassifyAbove(CleaningProcess):
                 reclassification. 
    
         Raises:
-            TypeError: when dtm isn't provided in a sound manner
+            TypeError: when dtm isn't provided in a sound manner.
         """
         if isinstance(dtm, str) or isinstance(dtm, Path):
             print(f"Opening {dtm}...")
@@ -42,8 +42,8 @@ class ReclassifyAbove(CleaningProcess):
             raise TypeError(f"dtm should be a str, a pathlib.Path or a rasterio.io.DatasetReader")
         
         self.base_class = base_class
-        self.new_class = new_class
-        self.threshold = threshold
+        self.new_class  = new_class
+        self.threshold  = threshold
 
         self.cache = Path('/tmp/lastricks_cache')
         self.cache.mkdir(exist_ok=True)
