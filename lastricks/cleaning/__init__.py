@@ -1,3 +1,3 @@
 from .cleaning import *
-from .new_class_from_gpkg import new_class_from_gpkg
+from .new_class_from_gpkg import NewClassFromGpkg
 from .reclassify_above import ReclassifyAbove
