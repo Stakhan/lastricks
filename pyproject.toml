@@ -11,6 +11,9 @@ laspy =  "^2.0"
 rasterio = "^1.2"
 numpy = "^1.22"
 Shapely = "^1.8"
+pandas = "^1.4"
+geopandas = "^0.10"
+pathos = "^0.2"
 
 [tool.poetry.dev-dependencies]
 
