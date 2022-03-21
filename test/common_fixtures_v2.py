@@ -50,7 +50,7 @@ def mock_las_v2(tmp_path):
 
     yield filename
 
-    shutil.rmtree(filename, ignore_errors=True)
+    shutil.rmtree(filename.parent, ignore_errors=True)
 
 
 @pytest.fixture

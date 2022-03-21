@@ -25,7 +25,8 @@ class NewClassFromGpkg(CleaningProcess):
         gpkg,
         base_class,
         new_class,
-        gpkg_as_mask=True
+        gpkg_as_mask=True,
+        bbox=None
     ):
         """Generates a new class based on an existing class and a set of polygons
         or multipolygons (provided as GeoPackage). If points from `base_class` are within the given
@@ -46,7 +47,7 @@ class NewClassFromGpkg(CleaningProcess):
         """
         if isinstance(gpkg, str) or isinstance(gpkg, Path):
                 print(f"Opening {gpkg}...")
-                self.polygons = gpd.read_file(gpkg)
+                self.polygons = gpd.read_file(gpkg, bbox=bbox)
         else:
             raise TypeError(f"gpkg should be a str or a pathlib.Path but got {type(gpkg).__name__} ")
 

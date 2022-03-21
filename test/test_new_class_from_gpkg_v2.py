@@ -11,7 +11,7 @@ root_path = Path(__file__).parent.resolve()
 sys.path.insert(0, str(root_path.parent))
 import lastricks.cleaning as ltc
 from lastricks.cleaning.new_class_from_gpkg import is_within_worker
-from .common_fixtures_v2 import mock_las_v2, mock_gpkg, folder_mock_las_v2, mock_dtm
+from common_fixtures_v2 import mock_las_v2, mock_gpkg, folder_mock_las_v2, mock_dtm
  
     
 def test_mock_files_consistency(mock_las_v2, mock_gpkg):

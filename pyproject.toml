@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lastricks"
-version = "0.1.0"
+version = "0.1.1"
 description = "A few LAS manipulations"
 authors = ["Elie-Alban LESCOUT <elie-alban.lescout@eurosense.com>"]
 
@@ -14,6 +14,7 @@ Shapely = "^1.8"
 pandas = "^1.4"
 geopandas = "^0.10"
 pathos = "^0.2"
+laszip = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 

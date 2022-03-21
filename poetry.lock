@@ -159,6 +159,14 @@ laszip = ["laszip (>=0.1.0,<0.2.0)"]
 lazrs = ["lazrs (>=0.4.0,<0.5.0)"]
 
 [[package]]
+name = "laszip"
+version = "0.1.0"
+description = "Bindings for LASzip made with pybind11"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "multiprocess"
 version = "0.70.12.2"
 description = "better multiprocessing and multithreading in python"
@@ -412,7 +420,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "7b743990f93adfefe58021e813f25977a5401559251563fb70880115730586f9"
+content-hash = "80b3e584143c0e41d3e689ae39ba8d9c39299ad99a0c934912bbb3123bfedb15"
 
 [metadata.files]
 affine = [
@@ -474,6 +482,24 @@ iniconfig = [
 ]
 laspy = [
     {file = "laspy-2.1.2.tar.gz", hash = "sha256:724d51db4e6c52010495eea460caedec5ceb06bedb1192c7f7ae9c15eb52bafa"},
+]
+laszip = [
+    {file = "laszip-0.1.0-cp310-cp310-macosx_10_14_x86_64.whl", hash = "sha256:d1c5a9d61f4351abe41a8570aabdf0579f1abac8ba8b147ccaa9b24ba18633ad"},
+    {file = "laszip-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:24758b1fca4ac56a33b0859902d7c8d756d50f69102b882fe41dc3934998c5ae"},
+    {file = "laszip-0.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:0b4af64abf8494199c4268e189d2d5cf0e412450f7e7e0a6e80ee2586eefbbe0"},
+    {file = "laszip-0.1.0-cp36-cp36m-macosx_10_15_x86_64.whl", hash = "sha256:797fb58416af25048630083a961a98f8a11697ebc9f84dad1b1b9d85bf54fc4b"},
+    {file = "laszip-0.1.0-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c35eb359104244727e2c93889ff4150e9aefc63bf43c80d06aaa72a657f28896"},
+    {file = "laszip-0.1.0-cp36-cp36m-win_amd64.whl", hash = "sha256:e59dc09260bc73c6e12ae369181a3a08090dc126dc37e6ae2e6035fe8c04a6ac"},
+    {file = "laszip-0.1.0-cp37-cp37m-macosx_10_15_x86_64.whl", hash = "sha256:b5b3fc9ac72748544ce79e5bc209735499f6df57aa41a0c28b8383a7f16f9e0a"},
+    {file = "laszip-0.1.0-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:22955a9a75d829c27b0c78bfd0cbc0d8f590507181680beb03b78e498a8e88cd"},
+    {file = "laszip-0.1.0-cp37-cp37m-win_amd64.whl", hash = "sha256:f522b1e30609e76093c2a60255402505a321fc31ce344a3cd35e577ded0add80"},
+    {file = "laszip-0.1.0-cp38-cp38-macosx_10_15_x86_64.whl", hash = "sha256:b83eb9e1bee90521aecf21ce5259ef4ea96c683ee7638b51d179945e999db8b9"},
+    {file = "laszip-0.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e5f3ae77a05e866f5048a63d0b17b3bfcc50ceedfcf74546571464dae940ed66"},
+    {file = "laszip-0.1.0-cp38-cp38-win_amd64.whl", hash = "sha256:93d5650bf8abc75de52701d5ab7324fe584fe3986eb906559c50db5ab239fa46"},
+    {file = "laszip-0.1.0-cp39-cp39-macosx_10_15_x86_64.whl", hash = "sha256:039477813e827ff537358288ce40bfcec985fb4d9fddc60b4b8902cdc5b4f3d1"},
+    {file = "laszip-0.1.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1020c109556f6690471e8232010f57e2fd670b38a55ddf9b3133fd984b1e0486"},
+    {file = "laszip-0.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:a7c62c1854c9acd9d690fca1f7694b9c7e681cfe81506b0b46b89966ca2f9402"},
+    {file = "laszip-0.1.0-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:4d7cb0ae943edebadc995dfea67bffbba4c2b12da9d2cf219c22b6e41b144b3f"},
 ]
 multiprocess = [
     {file = "multiprocess-0.70.12.2-cp27-cp27m-macosx_10_12_x86_64.whl", hash = "sha256:35d41e410ca2a32977a483ae1f40f86b193b45cecf85567c2fae402fb8bf172e"},

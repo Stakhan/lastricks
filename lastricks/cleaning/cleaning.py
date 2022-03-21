@@ -16,6 +16,7 @@ class Cleaner:
         cleaning_pipeline,
         output_folder=None,
         output_suffix=None,
+        output_format='.las'
         ):
         """
         Args:
@@ -26,11 +27,23 @@ class Cleaner:
                 cleaning result. Defaults to None.
             output_suffix (str, optional): Suffix appended to result filename.
                 Shouldn't contain any dots. Defaults to None.
+            output_format (str, optional): format to which resulting point
+                will be saved. Possible values are 'las' or 'laz'.
+                Defaults to 'las'.
         """
         input_path = Path(input_path)
         
         assert input_path.exists()
         self.input_path = input_path
+        
+        supported_formats = ['las', 'laz']
+        if output_format in supported_formats:
+            self.output_format = '.'+output_format
+        elif output_format in ['.'+fmt for fmt in supported_formats]:
+            self.output_format = output_format
+        else:
+            raise ValueError(f"'{output_format}' is not a supported output format. Expecting one of the following: {supported_formats}.")
+
         assert len(cleaning_pipeline) > 0 
         self.cleaning_pipeline = cleaning_pipeline
         print("Cleaner object created with following CleaningProcess:\n--> "+'\n--> '.join([str(cp) for cp in cleaning_pipeline])+'\n')
@@ -82,17 +95,21 @@ class Cleaner:
             las_paths = [p for p in self.input_path.iterdir() if p.is_file() and p.suffix in ['.las', '.laz']]
         
         for i,path in enumerate(las_paths):
-            startt = time.time()
-
+            
             print(f"[{i+1}/{len(las_paths)}]")
             
-            las = laspy.read(path)
-            las = self.apply_pipeline(las)
-            outlas_path = self.output_folder / (path.stem+self.output_suffix+path.suffix)
-            print(f"Writting to {outlas_path}")
-            las.write( outlas_path )
+            outlas_path = self.output_folder / (path.stem+self.output_suffix+self.output_format)
+            if outlas_path.exists():
+                print(f"Skipping to {path.name}")
+                continue
+            else:
+                startt = time.time()
+                las = laspy.read(path)
+                las = self.apply_pipeline(las)
+                print(f"Writting to {outlas_path}")
+                las.write( outlas_path )
 
-            print(f"-- Processing time: {timedelta(seconds=time.time()-startt)}")
+                print(f"-- Processing time: {timedelta(seconds=time.time()-startt)}")
 
 
 class CleaningProcess:

@@ -10,7 +10,7 @@ root_path = Path(__file__).parent.resolve()
 
 sys.path.insert(0, str(root_path.parent))
 import lastricks.cleaning as ltc
-from .common_fixtures_v2 import mock_las_v2, folder_mock_las_v2, mock_dtm
+from common_fixtures_v2 import mock_las_v2, folder_mock_las_v2, mock_dtm
 
 
 class MockCleaning(ltc.CleaningProcess):
@@ -108,3 +108,27 @@ def test_cleaningprocess(mock_las_v2):
     las = laspy.read(mock_las_v2)
     with pytest.raises(NotImplementedError) as e_info:
         cp(las)
+
+def test_cleaner_LAZ_output(
+    mock_cleaning_pipeline,
+    mock_las_v2
+    ):
+    cleaner = ltc.Cleaner(
+        mock_las_v2,
+        mock_cleaning_pipeline,
+        output_format='laz'
+        )
+    cleaner.clean()
+    expected_output = mock_las_v2.parent / f"{mock_las_v2.stem}_cleaned.laz"
+    assert expected_output.exists()
+
+def test_cleaner_wrong_output_format(
+    mock_cleaning_pipeline,
+    mock_las_v2
+    ):
+    with pytest.raises(ValueError) as e_info:
+        cleaner = ltc.Cleaner(
+        mock_las_v2,
+        mock_cleaning_pipeline,
+        output_format='wrong'
+        )
