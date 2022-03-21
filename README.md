@@ -1,4 +1,12 @@
- A few LAS manipulations
+# lastricks
+A few LAS manipulations
+
+
+## Installation
+For now, to avoid trouble when installing `rasterio` and `gdal`, I recommend to use the provided conda environment (the one with laspy 2.x):
+```
+conda env create --file lastricks_v2_env.yml
+```
 
 ## Run tests
  Since we are in the middle of the switch from laspy==1.7.x to laspy==2.0, make sure you have different virtual environments for each version of laspy.
@@ -8,15 +16,17 @@ pytest test/*_v2.py
 ```
  
 
-## TODOS
-+ [ ] finish refactor to laspy==2.0
-+ [ ] update use_cases to reflect refactor
-+ [ ] build wheel
+## Dev stuff
+
+### TODOS
++ [x] finish refactor to laspy==2.0
++ [x] update use_cases to reflect refactor
++ [x] build wheel
 + [ ] create documentation 
 
 
 
-## Blueprint for `metrics`  and `analysis` 
+### Blueprint for `metrics`  and `analysis` 
 We want a quick tool to generate all our usual metrics but on a specific region. Namely all ditches.
 All ditches points are known thanks to the `ahn4clust-dec1-wc` dataset.
 
