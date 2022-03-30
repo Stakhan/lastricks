@@ -100,7 +100,7 @@ class Cleaner:
             
             outlas_path = self.output_folder / (path.stem+self.output_suffix+self.output_format)
             if outlas_path.exists():
-                print(f"Skipping to {path.name}")
+                print(f"Skipping {path.name}")
                 continue
             else:
                 startt = time.time()
