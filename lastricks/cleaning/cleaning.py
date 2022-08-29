@@ -97,11 +97,12 @@ class Cleaner:
 
 class CleaningProcess:
     
-    def __call__(self, las):
+    def __call__(self, *las):
         """Process a single python representation of a LAS/LAZ file.
 
         Args:
-            las (laspy.LasData): LAS/LAZ file representation to process
+            *las tuple(laspy.LasData): One or moreLAS/LAZ file representation
+                to process.
 
         Returns:
             laspy.LasData: the resulting representation
