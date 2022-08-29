@@ -8,11 +8,11 @@ from pathlib import Path
 
 root_path = Path(__file__).parent.resolve()
 
-sys.path.insert(0, str(root_path.parent))
-import lastricks as lt
+sys.path.insert(0, str(root_path.parents[1]))
+import lastricks.core as ltc
 
 
-class MockLASProcess(lt.LASProcess):
+class MockLASProcess(ltc.LASProcess):
     def __init__(self, idx):
         self.idx = idx
 
@@ -20,6 +20,8 @@ class MockLASProcess(lt.LASProcess):
         print(f"Applying mock process #{self.idx}...")
         return las
 
+    def get_type(self):
+        return ltc.LASProcessType.SingleInput
 
 @pytest.fixture
 def mock_lasprocess_pipeline():
@@ -30,9 +32,9 @@ def test_processor_single_file_default(
     mock_lasprocess_pipeline,
     mock_las_v2
     ):
-    processor = lt.LASProcessor(
-        mock_las_v2,
-        mock_lasprocess_pipeline
+    processor = ltc.LASProcessor(
+        mock_lasprocess_pipeline,
+        mock_las_v2
         )
 
     processor.run()
@@ -45,9 +47,9 @@ def test_processor_single_file_alt_output_folder(
     mock_las_v2,
     tmp_path
     ):
-    processor = lt.LASProcessor(
-        mock_las_v2,
+    processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
+        mock_las_v2,
         output_folder=tmp_path
         )
 
@@ -60,9 +62,9 @@ def test_processor_single_file_alt_output_suffix(
     mock_lasprocess_pipeline,
     mock_las_v2
     ):
-    processor = lt.LASProcessor(
-        mock_las_v2,
+    processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
+        mock_las_v2,
         output_suffix='_alt_suffix'
         )
 
@@ -76,9 +78,9 @@ def test_processor_single_file_alt_output_folder_and_suffix(
     mock_las_v2,
     tmp_path
     ):
-    processor = lt.LASProcessor(
-        mock_las_v2,
+    processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
+        mock_las_v2,
         output_folder=tmp_path,
         output_suffix='_alt_suffix'
         )
@@ -92,18 +94,12 @@ def test_processor_dir_default(
     mock_lasprocess_pipeline,
     folder_mock_las_v2
     ):
-    processor = lt.LASProcessor(
+    processor = ltc.LASProcessor(
+        mock_lasprocess_pipeline,
         folder_mock_las_v2,
-        mock_lasprocess_pipeline
         )
 
     processor.run()
     for i in range(3):
         expected_output = (folder_mock_las_v2 / f"mock_{i}.las")
         assert expected_output.exists()
-
-def test_lasprocess(mock_las_v2):
-    cp = lt.LASProcess()
-    las = laspy.read(mock_las_v2)
-    with pytest.raises(NotImplementedError) as e_info:
-        cp(las)

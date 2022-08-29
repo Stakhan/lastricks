@@ -5,7 +5,7 @@ import numpy as np
 from pathlib import Path
 from rasterio.mask import mask
 from shapely.geometry import Polygon
-from .. import LASProcess
+from ..core import LASProcess, LASProcessType
 
 
 class ReclassifyAbove(LASProcess):
@@ -77,6 +77,8 @@ class ReclassifyAbove(LASProcess):
 
         return las
 
+    def get_type(self):
+        return LASProcessType.SingleInput
 
     def crop_dtm_to_aoi(self, las):
         """Crops our nation-wide Digital Terrain Model (DTM) to the las

@@ -1,4 +1,4 @@
-from .. import LASProcessor, LASProcess
+from ..core import LASProcessor, LASProcess
 
 class ErrorCloud(LASProcess):
     def __init__(
@@ -31,3 +31,6 @@ class ErrorCloud(LASProcess):
                 laspy.LasData: the resulting representation
         """
         pass
+
+    def get_type(self):
+        return LASProcessType.MultipleInput
