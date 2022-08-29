@@ -4,36 +4,36 @@ from pathlib import Path
 from datetime import timedelta
 
 
-class Cleaner:
-    """General structure for easy LAS/LAZ files cleaning from
-       a sequence of `lastricks.cleaning.CleaningProcess`.
+class LASProcessor:
+    """General structure for easy LAS/LAZ files processing from
+       a sequence of `lastricks.lasprocessor.LASProcess`.
        Handles both a single file or a folder of files.
     """
 
     def __init__(
         self,
         input_path,
-        cleaning_pipeline,
+        pipeline,
         output_folder=None,
         output_suffix=None,
         ):
         """
         Args:
-            input_path (str or Path): file or directory of files to clean.
-            cleaning_pipeline (list(lastricks.cleaning.CleaningProcess)): list
-                of cleaning process 
+            input_path (str or Path): file or directory of files to process.
+            pipeline (list(lastricks.lasprocessor.LASProcess)): list
+                of processes 
             output_folder (str or Path, optional): Target destination for
-                cleaning result. Defaults to None.
+                processing result. Defaults to `None`.
             output_suffix (str, optional): Suffix appended to result filename.
-                Shouldn't contain any dots. Defaults to None.
+                Shouldn't contain any dots. Defaults to `None`.
         """
         input_path = Path(input_path)
         
         assert input_path.exists()
         self.input_path = input_path
-        assert len(cleaning_pipeline) > 0 
-        self.cleaning_pipeline = cleaning_pipeline
-        print("Cleaner object created with following CleaningProcess:\n--> "+'\n--> '.join([str(cp) for cp in cleaning_pipeline])+'\n')
+        assert len(pipeline) > 0 
+        self.pipeline = pipeline
+        print("LASProcessor object created with following LASProcess(es):\n--> "+'\n--> '.join([str(p) for p in pipeline])+'\n')
 
         # Managing output folder
         if input_path.is_file():
@@ -52,7 +52,7 @@ class Cleaner:
         
         # Managing output suffix
         if not output_suffix and self.input_folder == self.output_folder:
-            self.output_suffix =  "_cleaned"
+            self.output_suffix =  "_processed"
         elif not output_suffix:
             self.output_suffix = ''
         elif output_suffix:
@@ -60,28 +60,28 @@ class Cleaner:
             self.output_suffix = output_suffix
 
     def apply_pipeline(self, las):
-        """Apply each `CleaningProcess` to a LAS/LAZ representation.
+        """Apply each `LASProcess` to a LAS/LAZ representation.
 
         Args:
             las (laspy.LasData): LAS/LAZ representation on which
                 pipeline will be applied
 
         Returns:
-            laspy.LasData: LAS/LAZ representation with cleaning
+            laspy.LasData: LAS/LAZ representation with process
                 pipeline applied
         """
-        for proc in self.cleaning_pipeline:
+        for proc in self.pipeline:
             las = proc(las)
         return las
 
-    def clean(self):
+    def run(self):
 
         if self.input_path.is_file():
             las_paths = [self.input_path]  
         elif self.input_path.is_dir():
             las_paths = [p for p in self.input_path.iterdir() if p.is_file() and p.suffix in ['.las', '.laz']]
         
-        for i,path in enumerate(las_paths):
+        for i, path in enumerate(las_paths):
             startt = time.time()
 
             print(f"[{i+1}/{len(las_paths)}]")
@@ -95,7 +95,7 @@ class Cleaner:
             print(f"-- Processing time: {timedelta(seconds=time.time()-startt)}")
 
 
-class CleaningProcess:
+class LASProcess:
     
     def __call__(self, *las):
         """Process a single python representation of a LAS/LAZ file.

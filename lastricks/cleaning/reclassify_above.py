@@ -5,10 +5,10 @@ import numpy as np
 from pathlib import Path
 from rasterio.mask import mask
 from shapely.geometry import Polygon
-from .cleaning import CleaningProcess
+from .. import LASProcess
 
 
-class ReclassifyAbove(CleaningProcess):
+class ReclassifyAbove(LASProcess):
     def __init__(
             self,
             dtm,

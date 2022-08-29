@@ -1,3 +1,7 @@
+"""
+/!\\ This code has been designed to be used with laspy 1.7.x
+"""
+
 import time
 import laspy
 import numpy as np

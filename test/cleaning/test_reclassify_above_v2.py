@@ -8,7 +8,7 @@ import rasterio
 import numpy as np
 from pathlib import Path
 
-root_path = Path(__file__).parent.resolve()
+root_path = Path(__file__).parents[1].resolve()
 
 sys.path.insert(0, str(root_path.parent))
 import lastricks.cleaning as ltc

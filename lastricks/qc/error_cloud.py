@@ -1,9 +1,8 @@
-from ..cleaning import CleaningProcess as LASProcess
+from .. import LASProcessor, LASProcess
 
 class ErrorCloud(LASProcess):
     def __init__(
             self,
-            ref_classif_location,
             error_label=1,
             correct_label=0
         ):
@@ -18,7 +17,7 @@ class ErrorCloud(LASProcess):
             error_label (int): value associated to the presence of an error.
             correct_label (int): value associated to the absence of error.
         """
-        self.ref_classif_loc = Path(ref_classif_location)
+        #self.ref_classif_loc = Path(ref_classif_location)
         self.error_label = error_label
         self.correct_label = correct_label
 

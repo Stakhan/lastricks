@@ -4,7 +4,7 @@ import numpy as np
 from pathlib import Path
 from numpy.random import random_sample, randint
 
-def generate_LasData(location):
+def generate_LasData():
     "Generates a random LAS/LAZ representaiton."
 
     allX, allY, allZ = ( random_sample(size=(10,))*100,
@@ -28,6 +28,7 @@ def generate_LasData(location):
 
     return mock_las
 
+@pytest.fixture
 def las_classif_to_compare(tmp_path):
     las1 = generate_LasData()
     las2 = generate_LasData()

@@ -1,3 +1,7 @@
+"""
+/!\\ These tests are meant to be used with laspy 1.7.x
+"""
+
 import laspy
 import pytest
 import shutil
