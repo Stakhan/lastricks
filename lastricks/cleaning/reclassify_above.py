@@ -1,4 +1,5 @@
 import laspy
+import tempfile
 import rasterio
 import numpy as np
 from pathlib import Path
@@ -45,8 +46,8 @@ class ReclassifyAbove(CleaningProcess):
         self.new_class = new_class
         self.threshold = threshold
 
-        self.cache = Path('/tmp/lastricks_cache')
-        self.cache.mkdir(exist_ok=True)
+        self.cache = Path(tempfile.TemporaryDirectory().name) / 'lastricks_cache'
+        self.cache.mkdir(exist_ok=True, parents=True)
         
         
     def __call__(self, las):

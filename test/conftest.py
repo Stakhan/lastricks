@@ -3,6 +3,11 @@ import shutil
 import pytest
 import rasterio
 import numpy as np
+import geopandas as gpd
+from pathlib import Path
+from shapely.geometry import Polygon
+
+root_path = Path(__file__).parent.resolve()
 
 """
 These fixtures are similar to the ones in
@@ -94,3 +99,20 @@ def mock_dtm(tmp_path):
     mock_file.close()
 
     return  tmp_path / 'mock_dtm.tif'
+
+@pytest.fixture
+def mock_gpkg(tmp_path):
+    """Generates a small mock GeoPackage file.
+
+    Yields:
+        pathlib.Path: path to generated GeoPackage file
+    """
+    filename = tmp_path / "test_data" / "mock.gpkg"
+    (root_path / "test_data").mkdir(exist_ok=True)
+
+    df = gpd.GeoDataFrame(geometry=[ Polygon([(0, 0.5), (0, 2), (2, 1)]) ])
+    df.to_file(filename, driver="GPKG")
+
+    yield filename
+
+    shutil.rmtree(filename, ignore_errors=True)
