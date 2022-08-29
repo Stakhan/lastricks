@@ -6,7 +6,11 @@ A few LAS manipulations.
 ```
 git clone https://github.com/Stakhan/lastricks
 ```
-2. Install in editable mode from `pyproject.toml`:
+2. Install complicated dependencies:
+```
+ conda install -c conda-forge geopandas 
+```
+3. Install the rest of the dependencies from `pyproject.toml`:
 ```
 cd lastricks
 pip install -e .
