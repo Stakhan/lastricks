@@ -17,12 +17,12 @@ pip install -e .
 ```
 
 ## Run tests
- Since we are in the middle of the switch from laspy==1.7.x to laspy==2.0, make sure you have different virtual environments for each version of laspy.
- Only the test files with a `_v2` prefix will run with laspy==2.0:
-```
-pytest test/*_v2.py
-```
  
+```
+pytest test
+```
+*NB: Some older tests have been developed with laspy==1.7.x and haven't been rewritten yet. They are suffixed with `_v1.7` and prefixed with a `_` to avoid execution when launching pytest.*
+
 ## Development
 ### General TODOS
 + [ ] finish refactor to laspy==2.0

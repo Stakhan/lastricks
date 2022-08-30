@@ -14,3 +14,5 @@ def test_error_cloud(las_classif_to_compare):
         error_label=1,
         correct_label=0
     )
+
+    ec()

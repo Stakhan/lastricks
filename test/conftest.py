@@ -15,7 +15,7 @@ These fixtures are similar to the ones in
 """
 
 @pytest.fixture
-def mock_las_v2(tmp_path):
+def mock_las(tmp_path):
     """Generates a small mock LAS file using laspy 2.x.
 
     Returns:
@@ -57,19 +57,19 @@ def mock_las_v2(tmp_path):
 
 
 @pytest.fixture
-def folder_mock_las_v2(mock_las_v2):
+def folder_mock_las(mock_las):
     """Generates a folder containing several copies of a mock LAS file.
 
     Args:
-        mock_las_v2 (pytest.fixture): the `common_fixtures_v2.mock_las_v2`  fixture
+        mock_las (pytest.fixture): the `conftest.mock_las`  fixture
 
     Returns:
         pathlib.Path: path to the generated folder
     """
-    mock_folder = mock_las_v2.parent / 'mock_folder'
+    mock_folder = mock_las.parent / 'mock_folder'
     mock_folder.mkdir(exist_ok=True)
     for i in range(3):
-        shutil.copy(mock_las_v2, mock_folder / f'mock_{i}.las')
+        shutil.copy(mock_las, mock_folder / f'mock_{i}.las')
         lasfile = laspy.read(mock_folder / f'mock_{i}.las')
         lasfile.X += i*5000
         lasfile.write(mock_folder / f'mock_{i}.las')

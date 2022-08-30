@@ -30,76 +30,90 @@ def mock_lasprocess_pipeline():
 
 def test_processor_single_file_default(
     mock_lasprocess_pipeline,
-    mock_las_v2
+    mock_las
     ):
     processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
-        mock_las_v2
+        mock_las
         )
 
     processor.run()
-    expected_output = (mock_las_v2.parent / f"{mock_las_v2.stem}_processed{mock_las_v2.suffix}")
+    expected_output = (mock_las.parent / f"{mock_las.stem}_processed{mock_las.suffix}")
     assert expected_output.exists()
 
 
 def test_processor_single_file_alt_output_folder(
     mock_lasprocess_pipeline,
-    mock_las_v2,
+    mock_las,
     tmp_path
     ):
     processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
-        mock_las_v2,
+        mock_las,
         output_folder=tmp_path
         )
 
     processor.run()
-    expected_output = (tmp_path / mock_las_v2.name)
+    expected_output = (tmp_path / mock_las.name)
     assert expected_output.exists()
 
 
 def test_processor_single_file_alt_output_suffix(
     mock_lasprocess_pipeline,
-    mock_las_v2
+    mock_las
     ):
     processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
-        mock_las_v2,
+        mock_las,
         output_suffix='_alt_suffix'
         )
 
     processor.run()
-    expected_output = mock_las_v2.parent / f"{mock_las_v2.stem}_alt_suffix{mock_las_v2.suffix}"
+    expected_output = mock_las.parent / f"{mock_las.stem}_alt_suffix{mock_las.suffix}"
     assert expected_output.exists()
 
 
 def test_processor_single_file_alt_output_folder_and_suffix(
     mock_lasprocess_pipeline,
-    mock_las_v2,
+    mock_las,
     tmp_path
     ):
     processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
-        mock_las_v2,
+        mock_las,
         output_folder=tmp_path,
         output_suffix='_alt_suffix'
         )
 
     processor.run()
-    expected_output = tmp_path / f"{mock_las_v2.stem}_alt_suffix{mock_las_v2.suffix}"
+    expected_output = tmp_path / f"{mock_las.stem}_alt_suffix{mock_las.suffix}"
     assert expected_output.exists()
 
 
 def test_processor_dir_default(
     mock_lasprocess_pipeline,
-    folder_mock_las_v2
+    folder_mock_las
     ):
     processor = ltc.LASProcessor(
         mock_lasprocess_pipeline,
-        folder_mock_las_v2,
+        folder_mock_las,
         )
 
     processor.run()
     for i in range(3):
-        expected_output = (folder_mock_las_v2 / f"mock_{i}.las")
+        expected_output = (folder_mock_las / f"mock_{i}.las")
         assert expected_output.exists()
+
+
+def test_processor_single_file_default_multiple_input(
+    mock_lasprocess_pipeline,
+    mock_las
+    ):
+    processor = ltc.LASProcessor(
+        mock_lasprocess_pipeline,
+        mock_las
+        )
+
+    processor.run()
+    expected_output = (mock_las.parent / f"{mock_las.stem}_processed{mock_las.suffix}")
+    assert expected_output.exists()
