@@ -15,4 +15,6 @@ def test_error_cloud(las_classif_to_compare):
         correct_label=0
     )
 
-    ec()
+    las_ec = ec(las1, las2)
+
+    assert las_ec.error_mask.tolist() == [1,1,1,1,0,0,0,0,0,0]

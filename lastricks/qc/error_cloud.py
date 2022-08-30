@@ -1,3 +1,5 @@
+import numpy as np
+from laspy import LasData, ExtraBytesParams
 from ..core import LASProcessor, LASProcess
 
 class ErrorCloud(LASProcess):
@@ -11,26 +13,40 @@ class ErrorCloud(LASProcess):
            considered erroneous when its classificaiton value differs from
            the one in the ground truth.
         Args:
-            ref_classif_location (str, pathlib.Path): folder containing a
-                ground truth file for each of the file processed by this
-                `LASProcess`.
             error_label (int): value associated to the presence of an error.
             correct_label (int): value associated to the absence of error.
         """
-        #self.ref_classif_loc = Path(ref_classif_location)
-        self.error_label = error_label
-        self.correct_label = correct_label
+        assert 0 <= error_label <= 255
+        assert 0 <= correct_label <= 255
+        assert error_label != correct_label
 
-    def __call__(self, las):
-        """Process a single python representation of a LAS/LAZ file.
+        self.matcher = {  True: error_label,
+                         False: correct_label }
+
+    def __call__(self, las: LasData, las_ref: LasData):
+        """Process a single set of LAS/LAZ point clouds.
 
             Args:
-                las (laspy.LasData): LAS/LAZ file representation to process
+                las (laspy.LasData): point cloud in which errors should
+                    be spotted.
+                las_ref (laspy.LasData): reference (groud truth) point
+                    cloud to spot the errors.
 
             Returns:
-                laspy.LasData: the resulting representation
+                laspy.LasData: same as `las` but with an error mask highlighting
+                    the errors in a new point record.
         """
-        pass
+        mask = las.classification != las_ref.classification
+
+        las.add_extra_dim(
+            ExtraBytesParams(
+                    name=f"error_mask",
+                    type=np.uint8,
+                    description=f"Binary error mask"
+            )
+        )
+        las['error_mask'] = np.vectorize(self.matcher.get)( mask )
+        return las
 
     def get_type(self):
-        return LASProcessType.MultipleInput
+        return LASProcessType.DoubleInput

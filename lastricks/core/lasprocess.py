@@ -4,7 +4,8 @@ from abc import ABC, abstractmethod
 
 class LASProcessType(Enum):
     SingleInput = 1
-    MultipleInput = 2
+    DoubleInput = 2
+    MultipleInput = 3
 
 class LASProcess(ABC):
     
