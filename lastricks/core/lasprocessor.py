@@ -16,7 +16,7 @@ class LASProcessor:
         *input_paths,
         output_folder=None,
         output_suffix=None,
-        ):
+        ) -> None:
         """
         Args:
             input_path (str or Path): file or directory of files to process.
@@ -27,12 +27,16 @@ class LASProcessor:
             output_suffix (str, optional): Suffix appended to result filename.
                 Shouldn't contain any dots. Defaults to `None`.
         """
-        if len(input_paths) > 1:
-            self.state = MultipleInputState()
-            self.state.context = self
-        else:
+        if len(input_paths) == 1:
             self.state = SingleInputState()
             self.state.context = self
+        elif len(input_paths) == 2:
+            self.state = DoubleInputState()
+            self.state.context = self
+        else:
+            raise ValueError(
+                f"No LASProcess supports {len(input_paths)} input paths yet."
+                )
 
         self.manage_folders(
             input_paths,
@@ -42,21 +46,22 @@ class LASProcessor:
 
         assert len(pipeline) > 0 
         self.pipeline = pipeline
-        print("LASProcessor object created with following LASProcess(es):\n--> "+'\n--> '.join([str(p) for p in pipeline])+'\n')
-
-        
+        print(
+            "LASProcessor object created with following LASProcess(es):\n--> "
+            +"\n--> ".join([str(p) for p in pipeline])+"\n"
+            )
 
     def manage_folders(
         self,
         input_paths,
         output_folder
-        ):
+        ) -> None:
         self.state.manage_folders(
             input_paths,
             output_folder
         )
             
-    def manage_suffix(self, output_suffix):  
+    def manage_suffix(self, output_suffix) -> None:  
         # Managing output suffix
         if not output_suffix and self.input_folder == self.output_folder:
             self.output_suffix =  "_processed"
@@ -66,7 +71,7 @@ class LASProcessor:
             assert '.' not in output_suffix
             self.output_suffix = output_suffix
 
-    def apply_pipeline(self, *las):
+    def apply_pipeline(self, *las) -> LasData:
         """Apply each `LASProcess` to a LAS/LAZ representation.
 
         Args:
@@ -76,9 +81,9 @@ class LASProcessor:
         Returns:
             laspy.LasData: resulting LAS/LAZ representation
         """
-        self.state.apply_pipeline(*las)
+        return self.state.apply_pipeline(*las)
 
-    def run(self):
+    def run(self) -> None:
         self.state.run()
         
 
@@ -108,7 +113,7 @@ class LASProcessorState(ABC):
 
 class SingleInputState(LASProcessorState):
     
-    def apply_pipeline(self, las) -> None:
+    def apply_pipeline(self, las) -> LasData:
         for proc in self.context.pipeline:
             las = proc(las)
         return las
