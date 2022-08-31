@@ -8,6 +8,7 @@ authors = ["Elie-Alban LESCOUT <elie-alban.lescout@eurosense.com>"]
 python = "^3.8"
 pytest = "^6.2"
 laspy =  "^2.0"
+laszip = "^0.1"
 rasterio = "^1.2"
 numpy = "^1.22"
 Shapely = "^1.8"
