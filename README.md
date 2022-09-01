@@ -23,11 +23,14 @@ pytest test
 ```
 *NB: Some older tests have been developed with laspy==1.7.x and haven't been rewritten yet. They are suffixed with `_v1.7` and prefixed with a `_` to avoid execution when launching pytest.*
 
-## Development
+## Development/Documentation
 ### General TODOS
-+ [ ] finish refactor to laspy==2.0
-+ [ ] update use_cases to reflect refactor
-+ [ ] create documentation 
++ [ ] create example folder with:
+    + simple example with kernel_func
+    + simple example with pipeline
++ [ ] minimal doc
++ [ ] take care of `lastricks/cleaning/new_class_from_gpkg`
++ [ ] extensive documentation 
 + [ ] build wheel
 
 
