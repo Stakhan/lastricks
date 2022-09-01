@@ -20,7 +20,7 @@ def test_get_las_paths(mock_input_manager):
     expected = [mock_input_manager.input_path/f"mock_{i}.las" for i in range(3)]
     obtained = mock_input_manager.get_las_paths()
     for i in range(3): 
-        assert  obtained[i] == expected[i]
+        assert  sorted(obtained)[i] == sorted(expected)[i]
 
 def test_len(mock_input_manager):
     assert len(mock_input_manager) == 3

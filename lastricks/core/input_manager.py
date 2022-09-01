@@ -40,6 +40,12 @@ class InputManager:
             self.query_las_path( query_path )
         )
 
+    def directory(self):
+        if self.input_path.is_dir():
+            return self.input_path
+        elif self.input_path.is_file():
+            return self.input_path.parent
+
     def __len__(self):
         return len(self.las_paths)
 

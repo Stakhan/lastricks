@@ -59,7 +59,9 @@ class ErrorCloud(LASProcess):
         las_ref_classif = np.vectorize(self.map_awaited.get)(
             self.remove_virtual_points(las_ref.classification)
         )
-
+        print('sizes after adjustments', len(las_classif), len(las_ref_classif))
+        print('unique values after adjustments', np.unique(las_classif), np.unique(las_ref_classif))
+        assert len(las_classif) == len(las_ref_classif)
         mask = las_classif != las_ref_classif
 
         las.add_extra_dim(
@@ -69,6 +71,7 @@ class ErrorCloud(LASProcess):
                     description=f"Binary error mask"
             )
         )
+        
         las['error_mask'] = np.vectorize(self.matcher.get)( mask )
         return las
 
@@ -76,6 +79,7 @@ class ErrorCloud(LASProcess):
         classification = np.array(classification)
         if 66 in classification:
             mask = classification != 66
+            print(f"Removing {sum(~mask)} virtual points")
             return classification[ mask ]
         else:
             return classification
