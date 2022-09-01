@@ -1,13 +1,10 @@
 """
 Goal: clean water classifier (binary) prediction by removing points outside water database over the netherlands
 """
-
-from pathlib import Path
-import sys
-sys.path.append('..')
-from lastricks.cleaning import new_class_from_gpkg
 import time
+from pathlib import Path
 from datetime import timedelta
+from lastricks.cleaning import new_class_from_gpkg
 
 start_time = time.time()
 

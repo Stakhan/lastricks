@@ -4,7 +4,8 @@ from pathlib import Path
 from datetime import timedelta
 
 sys.path.append('..')
-from lastricks.cleaning import Cleaner, ReclassifyAbove
+from lastricks.core LASProcessor
+from lastricks.cleaning import ReclassifyAbove
 
 cleaning_pipeline = [
     NewClassFromGpkg(
@@ -27,11 +28,11 @@ output_folder = base_path / "prediction_output_zone1A_cleaned2"
 print('INPUT:', input_path)
 print('OUTPUT:', output_folder)
 
-cleaner = Cleaner(
+processor = LASProcessor(
     input_path,
     cleaning_pipeline,
     output_folder=output_folder,
     output_suffix='_c2'
 )
 
-cleaner.clean()
+processor.run()
