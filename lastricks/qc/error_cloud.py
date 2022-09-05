@@ -62,6 +62,7 @@ class ErrorCloud(LASProcess):
         print('sizes after adjustments', len(las_classif), len(las_ref_classif))
         print('unique values after adjustments', np.unique(las_classif), np.unique(las_ref_classif))
         assert len(las_classif) == len(las_ref_classif)
+
         mask = las_classif != las_ref_classif
 
         las.add_extra_dim(
