@@ -148,7 +148,7 @@ pytest test
 ## Development/Documentation  <a name = "dev_docs"></a>
 ### General TODOS
 + [x] minimal usage section
-+ [ ] create example folder with:
++ [x] in use_cases:
     + simple example with kernel_func
     + simple example with pipeline
 + [ ] merge back to main (check older useful stuff is not ommitted in the process)
