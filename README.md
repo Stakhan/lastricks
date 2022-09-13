@@ -21,7 +21,7 @@ It can also handle sets of input LAS/LAZ files; in that case, it is implied that
 | Development                  | Status      | Feature                                                                |
 | ---------------------------- | ----------- | ---------------------------------------------------------------------- |
 | [`core`](lastricks/core)         | finished    | <ul><li>[x] LASProcessor</li><li>[x] LASProcess</li></ul> |
-| [`core`](lastricks/cleaning)     | finished    | <ul><li>[x] New Class From GeoPackage</li><li>[x] Reclassify Above</li></ul> |
+| [`cleaning`](lastricks/cleaning) | finished    | <ul><li>[x] New Class From GeoPackage</li><li>[x] Reclassify Above</li></ul> |
 | [`qc`](lastricks/qc)             | finished    | <ul><li>[x] Error Cloud</li></ul> |
 | [`analysis`](lastricks/analysis) | in progress | <ul><li>[ ] Classification/Segmentation Metrics Summary</li></ul> |
 
