@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import timedelta
 
 sys.path.append('..')
-from lastricks.core LASProcessor
+from lastricks.core import LASProcessor
 from lastricks.cleaning import ReclassifyAbove
 
 cleaning_pipeline = [
