@@ -5,7 +5,7 @@ from pathlib import Path
 from numpy.random import random_sample, randint
 
 def generate_LasData(length=10):
-    "Generates a random LAS/LAZ representaiton."
+    "Generates a random LAS/LAZ representation."
 
     allX, allY, allZ = ( random_sample(size=(length,))*100,
                          random_sample(size=(length,))*100,
