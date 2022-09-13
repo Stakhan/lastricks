@@ -1,7 +1,7 @@
 from pathlib import Path
 import sys
 sys.path.append('..')
-from lastricks import new_class_from_gpkg
+from lastricks.cleaning import new_class_from_gpkg
 import time
 from datetime import timedelta
 

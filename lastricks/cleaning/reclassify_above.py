@@ -1,13 +1,14 @@
 import laspy
+import tempfile
 import rasterio
 import numpy as np
 from pathlib import Path
 from rasterio.mask import mask
 from shapely.geometry import Polygon
-from .cleaning import CleaningProcess
+from ..core import LASProcess, LASProcessType
 
 
-class ReclassifyAbove(CleaningProcess):
+class ReclassifyAbove(LASProcess):
     def __init__(
             self,
             dtm,
@@ -45,8 +46,8 @@ class ReclassifyAbove(CleaningProcess):
         self.new_class = new_class
         self.threshold = threshold
 
-        self.cache = Path('/tmp/lastricks_cache')
-        self.cache.mkdir(exist_ok=True)
+        self.cache = Path(tempfile.TemporaryDirectory().name) / 'lastricks_cache'
+        self.cache.mkdir(exist_ok=True, parents=True)
         
         
     def __call__(self, las):
@@ -76,6 +77,8 @@ class ReclassifyAbove(CleaningProcess):
 
         return las
 
+    def get_type(self):
+        return LASProcessType.SingleInput
 
     def crop_dtm_to_aoi(self, las):
         """Crops our nation-wide Digital Terrain Model (DTM) to the las

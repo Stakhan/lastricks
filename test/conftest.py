@@ -1,18 +1,22 @@
 import laspy
-import pytest
 import shutil
+import pytest
 import rasterio
 import numpy as np
-from pathlib import Path
 import geopandas as gpd
+from pathlib import Path
 from shapely.geometry import Polygon
 
 root_path = Path(__file__).parent.resolve()
 
+"""
+These fixtures are similar to the ones in
+`test.common_fixtures` but they use laspy 2.x
+"""
 
 @pytest.fixture
 def mock_las(tmp_path):
-    """Generates a small mock LAS file.
+    """Generates a small mock LAS file using laspy 2.x.
 
     Returns:
         pathlib.Path: path to generated LAS file 
@@ -20,7 +24,6 @@ def mock_las(tmp_path):
     filename = tmp_path / "test_data" / "mock.las"
     (tmp_path / "test_data").mkdir(exist_ok=True)
 
-    test_las = laspy.file.File(filename, mode="w", header=laspy.header.Header())
     allX = np.array([1, 2000, 3000, 5000, 6000, 6000])
     allY = np.array([1000, 0, 0, 2000, 2000, 3000])
     allZ = np.array([1001, 2000, 55000, 27000, 8000, 9000])
@@ -32,18 +35,21 @@ def mock_las(tmp_path):
     Ymax = np.ceil(np.max(allY))
     Zmax = np.ceil(np.max(allZ))
 
-    test_las.header.offset = [Xmin,Ymin,Zmin]
-    test_las.header.scale = [0.001,0.001,0.001]
-    test_las.header.min = [Xmax,Ymax,Zmax]
-    test_las.header.max = [Xmax,Ymax,Zmax]
+    mock_hdr = laspy.LasHeader(version="1.2", point_format=1)
+    mock_hdr.offsets = [0.0,0.0,0.0]
+    mock_hdr.scales = [0.001,0.001,0.001]
+    mock_hdr.mins = [Xmax,Ymax,Zmax]
+    mock_hdr.maxs = [Xmax,Ymax,Zmax]
 
-    test_las.X = allX
-    test_las.Y = allY
-    test_las.Z = allZ
+    mock_las = laspy.LasData(mock_hdr)
 
-    test_las.classification = [1, 1, 2, 2, 1, 1]
+    mock_las.X = allX
+    mock_las.Y = allY
+    mock_las.Z = allZ
 
-    test_las.close()
+    mock_las.classification = [1, 1, 9, 9, 1, 1]
+
+    mock_las.write(filename)
 
     yield filename
 
@@ -55,7 +61,7 @@ def folder_mock_las(mock_las):
     """Generates a folder containing several copies of a mock LAS file.
 
     Args:
-        mock_las (pytest.fixture): the `common_fixtures.mock_las`  fixture
+        mock_las (pytest.fixture): the `conftest.mock_las`  fixture
 
     Returns:
         pathlib.Path: path to the generated folder
@@ -64,13 +70,35 @@ def folder_mock_las(mock_las):
     mock_folder.mkdir(exist_ok=True)
     for i in range(3):
         shutil.copy(mock_las, mock_folder / f'mock_{i}.las')
-        lasfile = laspy.file.File(mock_folder / f'mock_{i}.las', mode='rw')
+        lasfile = laspy.read(mock_folder / f'mock_{i}.las')
         lasfile.X += i*5000
-        lasfile.close()
+        lasfile.write(mock_folder / f'mock_{i}.las')
     
     yield mock_folder
 
     shutil.rmtree(mock_folder, ignore_errors=True)
+
+
+@pytest.fixture
+def mock_dtm(tmp_path):
+    x = np.linspace(1, 6, 8)
+    y = np.linspace(1, 3, 3)
+    X, Y = np.meshgrid(x, y)
+    Z = X + Y
+
+    mock_file = rasterio.open(
+        tmp_path / 'mock_dtm.tif',
+        'w',
+        driver='GTiff',
+        height=Z.shape[0],
+        width=Z.shape[1],
+        count=1,
+        dtype=Z.dtype
+    )
+    mock_file.write(Z, 1)
+    mock_file.close()
+
+    return  tmp_path / 'mock_dtm.tif'
 
 @pytest.fixture
 def mock_gpkg(tmp_path):
@@ -82,7 +110,7 @@ def mock_gpkg(tmp_path):
     filename = tmp_path / "test_data" / "mock.gpkg"
     (root_path / "test_data").mkdir(exist_ok=True)
 
-    df = gpd.GeoDataFrame(geometry=[ Polygon([(0.5, 0.5), (0, 2), (2, 1)]) ])
+    df = gpd.GeoDataFrame(geometry=[ Polygon([(0, 0.5), (0, 2), (2, 1)]) ])
     df.to_file(filename, driver="GPKG")
 
     yield filename
