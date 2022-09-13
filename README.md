@@ -20,10 +20,10 @@ It can also handle sets of input LAS/LAZ files; in that case, it is implied that
 
 | Development                  | Status      | Feature                                                                |
 | ---------------------------- | ----------- | ---------------------------------------------------------------------- |
-| core                         | finished    | <ul><li>[x] LASProcessor</li><li>[x] LASProcess</li></ul> |
-| cleaning                     | finished    | <ul><li>[x] New Class From GeoPackage</li><li>[x] Reclassify Above</li></ul> |
-| qc                           | finished    | <ul><li>[x] Error Cloud</li></ul> |
-| analysis                     | in progress | <ul><li>[ ] Classification/Segmentation Metrics Summary</li></ul> |
+| [`core`](lastricks/core)         | finished    | <ul><li>[x] LASProcessor</li><li>[x] LASProcess</li></ul> |
+| [`core`](lastricks/cleaning)     | finished    | <ul><li>[x] New Class From GeoPackage</li><li>[x] Reclassify Above</li></ul> |
+| [`qc`](lastricks/qc)             | finished    | <ul><li>[x] Error Cloud</li></ul> |
+| [`analysis`](lastricks/analysis) | in progress | <ul><li>[ ] Classification/Segmentation Metrics Summary</li></ul> |
 
 ## Installation <a name = "installation"></a>
 1. Clone the repository:
@@ -145,7 +145,7 @@ pytest test
 ```
 *NB: Some older tests have been developed with laspy==1.7.x and haven't been rewritten yet. They are suffixed with `_v1.7` and prefixed with a `_` to avoid execution when launching `pytest test`*
 
-## Development/Documentation  <a name = "dev_docs"></a>
+## Development/Documentation  <a name = "dev_doc"></a>
 ### General TODOS
 + [x] minimal usage section
 + [x] in use_cases:
