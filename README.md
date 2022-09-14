@@ -115,7 +115,6 @@ for path in main_input:
     # Do something with the representation...
 ```
 Knowing this, let's write a kernel function that will apply the `qc.ErrorCloud` LASProcess:
-
 ```python
 error_cloud = ErrorCloud(
     error_label = 1,
@@ -126,7 +125,8 @@ def ec_kernel_func(path, main_input, *other_inputs):
     gt_las = other_inputs[0].query_las(path)
     return error_cloud(las, gt_las)
 ```
-And provide it to a LASProcessor object:
+> NB: The kernel function has to match the following signature: ``kernel_func(path: Path, main_input: InputManager, *other_inputs: InputManager) -> LasData``.
+And provide this kernel function to a LASProcessor object:
 ```python
 output_path = Path('/path/to/output')
 processor = LASProcessor(
