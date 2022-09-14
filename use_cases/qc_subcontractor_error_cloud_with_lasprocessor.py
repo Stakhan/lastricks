@@ -21,9 +21,6 @@ gt_input_path = root_path / "01_delivered"
 output_path = root_path / "02_error_cloud"
 rejected_path = root_path / "03_rejected"
 
-main_input = InputManager( input_path )
-gt_input = InputManager( gt_input_path )
-
 error_cloud = ErrorCloud(
     error_label = 1,
     correct_label = 0
