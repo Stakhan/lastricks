@@ -126,6 +126,7 @@ def ec_kernel_func(path, main_input, *other_inputs):
     return error_cloud(las, gt_las)
 ```
 > NB: The kernel function has to match the following signature: ``kernel_func(path: Path, main_input: InputManager, *other_inputs: InputManager) -> LasData``.
+
 And provide this kernel function to a LASProcessor object:
 ```python
 output_path = Path('/path/to/output')
