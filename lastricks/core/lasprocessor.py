@@ -27,7 +27,8 @@ class LASProcessor:
         pipeline: list = None,
         output_folder: Path = None,
         output_suffix: str = None,
-        rejected_folder: Path = None
+        rejected_folder: Path = None,
+        rejection_mechanism: bool =True
         ) -> None:
         """
         Args:
@@ -45,9 +46,13 @@ class LASProcessor:
                 Shouldn't contain any dots. If `None`, defaults to
                 '_processed'.
             output_folder (str or Path, optional): Target destination for
-                rejected files. A file is rejected when a process applied
-                to it raises an error. If `None`, defaults to a folder
-                named `rejected` inside `main_input_folder`.
+                rejected files if rejection_mechanism is `True`. A file is
+                rejected when a process applied to it raises an error. If
+                `None`, defaults to a folder named `rejected` inside
+                `main_input_folder`.
+            rejection_mechanism (bool): whether rejection mechanism is
+                activated or not. A file is rejected when a process applied
+                to it raises an error. Defaults to True. 
         """
         if pipeline and kernel_func:
             raise ValueError( "You have to provide either a pipeline or"
@@ -76,6 +81,7 @@ class LASProcessor:
         self.output_folder = self.determine_output_folder( output_folder )
         self.rejected_folder = self.determine_rejected_folder(rejected_folder)
         self.output_suffix = self.determine_suffix(output_suffix)
+        self.rejection_mechanism = rejection_mechanism
 
     def determine_output_folder(self, output_folder: Path) -> Path:
         if output_folder:
@@ -141,8 +147,11 @@ class LASProcessor:
                         *self.other_inputs
                         )
                 except Exception as e:
-                    self.handle_rejected(path, e)
-                    continue
+                    if self.rejection_mechanism:
+                        self.handle_rejected(path, e)
+                        continue
+                    else:
+                        raise e
 
                 print(f"Writting to {outlas_path}")
                 las.write( outlas_path )
