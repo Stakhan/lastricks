@@ -18,11 +18,12 @@ It can also handle sets of input LAS/LAZ files; in that case, it is implied that
 
 ## Status <a name = "status"></a>
 
-| Development                  | Status      | Feature                                                                |
-| ---------------------------- | ----------- | ---------------------------------------------------------------------- |
+| Development                      | Status      | Feature                                                                |
+| -------------------------------- | ----------- | ---------------------------------------------------------------------- |
 | [`core`](lastricks/core)         | finished    | <ul><li>[x] LASProcessor</li><li>[x] LASProcess</li></ul> |
 | [`cleaning`](lastricks/cleaning) | finished    | <ul><li>[x] New Class From GeoPackage</li><li>[x] Reclassify Above</li></ul> |
 | [`qc`](lastricks/qc)             | finished    | <ul><li>[x] Error Cloud</li></ul> |
+| [`las2las`](lastricks/las2las)   | finished    | <ul><li>[x] CopyField </li></ul> |
 | [`analysis`](lastricks/analysis) | in progress | <ul><li>[ ] Classification/Segmentation Metrics Summary</li></ul> |
 
 ## Installation <a name = "installation"></a>
