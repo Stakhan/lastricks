@@ -61,7 +61,7 @@ class LASProcessor:
             assert len(pipeline) > 0 
             self.pipeline = pipeline
             print(
-                "LASProcessor object created with following"
+                "LASProcessor object created with following "
                 +"LASProcess(es):\n--> "
                 +"\n--> ".join([str(p) for p in pipeline])+"\n"
                 )
