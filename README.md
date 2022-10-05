@@ -78,7 +78,7 @@ Create a LASProcessor object (responsible for abstracting the handling of sets o
 ```python
 processor = LASProcessor(
     input_path,
-    cleaning_pipeline,
+    pipeline=cleaning_pipeline,
     output_folder=output_path,
     output_suffix='_processed'
 )
