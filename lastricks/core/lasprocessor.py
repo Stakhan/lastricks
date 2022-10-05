@@ -28,7 +28,7 @@ class LASProcessor:
         output_folder: Path = None,
         output_suffix: str = None,
         rejected_folder: Path = None,
-        rejection_mechanism: bool =True
+        rejection_mechanism: bool = True
         ) -> None:
         """
         Args:
