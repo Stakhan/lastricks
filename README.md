@@ -140,6 +140,14 @@ processor.run()
 ```
 See [`here`](use_cases/qc_subcontractor_error_cloud_with_lasprocessor.py) for the complete example.
 
+### Creating your own `LASProcess`
+You can easily create and apply a custom process by inheriting the `lastricks.core.LASProcess` class. A few methods should be implemented for the object to work:
++ ``__call__(*las: LasData) -> LasData:``: the actual processing on one or many LAS representations.
++ ``get_type()``: should return a ``LASProcessType`` based on the number of input (`SingleInput`, `DoubleInput`, `MultipleInput`).
++ ``__init__()`` (optional): setup all the required material for the `LASProcess`.
+
+See [here](lastricks\qc\error_cloud.py) or [here](use_cases\dump_classif_to_rgb.py) for full-fledged examples.
+
 ## Run tests <a name = "run_tests"></a>
 
 ```
