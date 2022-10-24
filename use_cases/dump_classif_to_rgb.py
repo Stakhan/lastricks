@@ -41,9 +41,9 @@ class DumpClassifToRGB(LASProcess):
         return LASProcessType.SingleInput
 
 if __name__ == '__main__':
-    root_path = Path(r"C:\Users\EAL\OneDrive - ESRI BELUX NV\Documents\Visuals\05_materials\training_samples")
-    input_path = root_path / 'rgb_colors'
-    output_path = root_path / 'rgb_classif'
+    root_path = Path(r"C:\Users\EAL\OneDrive - ESRI BELUX NV\Documents\Visuals\04_1sqkm_area")
+    input_path = root_path 
+    output_path = root_path 
     cleaning_pipeline = [
         DumpClassifToRGB(mapping={
             1: (1, 1, 1),
