@@ -139,7 +139,7 @@ class DeliveryComparator:
 
         # Stats per file
         stats_df = pd.DataFrame( data=self.stats )
-        stats_df.to_csv(report_out / 'stats_per_file.csv', mode='a')
+        stats_df.to_csv(report_out / 'stats_per_file.csv', mode='w')
 
         # Summary
         stats_summary = {
@@ -150,7 +150,7 @@ class DeliveryComparator:
             'nb_missing_changes':[sum(self.stats['nb_missing_changes'])]
         }
         stats_sum_df = pd.DataFrame( data=stats_summary )
-        stats_sum_df.to_csv(report_out / 'stats_summary.csv', mode='a')
+        stats_sum_df.to_csv(report_out / 'stats_summary.csv', mode='w')
 
     def compare(self):
         for path in self.main_input:
