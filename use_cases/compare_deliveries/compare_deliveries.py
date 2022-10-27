@@ -1,5 +1,6 @@
 import laspy
 import fiona
+import numpy as np
 import pandas as pd
 import geopandas as gpd
 from pathlib import Path
@@ -113,7 +114,7 @@ class DeliveryComparator:
         inter_mask = []
         for ref_geom in local_ref:
             inter_mask.append(
-            any( test.apply(ref_geom.intersects) )
+            any( cc_vect.apply(ref_geom.intersects) )
             )
         return inter_mask
     
@@ -145,7 +146,7 @@ class DeliveryComparator:
             'index': ['TOTAL'],
             'nb_changes': [sum(self.stats['nb_changes'])],
             'nb_expected_changes': [sum(self.stats['nb_expected_changes'])],
-            'coverage_expected_changes_%': [mean(self.stats['coverage_expected_changes_%'])],
+            'coverage_expected_changes_%': [np.mean(self.stats['coverage_expected_changes_%'])],
             'nb_missing_changes':[sum(self.stats['nb_missing_changes'])]
         }
         stats_sum_df = pd.DataFrame( data=stats_summary )
@@ -177,7 +178,11 @@ class DeliveryComparator:
 
                     self.log("Done")
                 except Exception as e:
-                    print(f"{e.__class__.__name__} when trying to process {path.name}")
+                    if True:
+                        print(f"{e.__class__.__name__} when trying to process {path.name}")
+                        continue
+                    else:
+                        raise e
             else:
                 self.log(f"Skipping {path.stem}...")
 
@@ -185,16 +190,15 @@ class DeliveryComparator:
         print(str(self.timer)+" | "+msg)
 
 if __name__ == '__main__':
-    
 
-    root = Path(__file__).resolve().parents[2] / 'tmp' / 'compare_deliveries'
-    
-    delivery_1_path = root / 'delivery_1' / 'laz'
-    delivery_2_path = root / 'delivery_2' / 'laz'
-    vect_ref_path = root / 'delivery_1' / 'report' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
-    output_path = root / 'output'
+
+    root = Path("/mnt/share/00 Lidar - AI/Input data/12_Subcontractor_AREA1_PK")
+    delivery_1_path = root / '03_Back2020909'
+    delivery_2_path = root / '04_Back20220928' / 'laz'
+    vect_ref_path = root / '03_Back2020909' / 'raport' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
+    output_path = Path(__file__).parent / 'output'
     crs = 'EPSG:2154'
-    
+
     delivery_comparator = DeliveryComparator(
         delivery_1_path,
         delivery_2_path,
