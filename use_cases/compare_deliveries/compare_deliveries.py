@@ -1,4 +1,6 @@
 import laspy
+import fiona
+import pandas as pd
 import geopandas as gpd
 from pathlib import Path
 from datetime import datetime
@@ -10,7 +12,20 @@ from lastricks.core import InputManager
 
 change_cloud = ErrorCloud(
     error_label = 1,
-    correct_label = 0
+    correct_label = 0,
+    map_awaited={
+            0: 0,
+            1: 1,
+            2: 2,
+            3: 3,
+            4: 4,
+            5: 5,
+            6: 6,
+            9: 9,
+            17: 17,
+            64: 64,
+            65: 65
+        }
 )
 
 class Timer:
@@ -19,7 +34,7 @@ class Timer:
     def __str__(self):
         return str(datetime.now()-self.start_time)
 
-def generate_vector(las, timer):
+def generate_vector(las, timer, crs='EPSG:2154'):
 
     print(f"{timer} | Computing mask for {path.stem}")
     mask = las.error_mask == 1
@@ -28,7 +43,7 @@ def generate_vector(las, timer):
     points = [ Point(x[i], y[i]) for i in range(sum(mask)) ]
     ds = gpd.GeoSeries(
         points,
-        crs='EPSG:2154'
+        crs=crs
         )
     print(f"{timer} | Computing buffer")
     buffers = ds.buffer(1, resolution=6)
@@ -41,15 +56,35 @@ def generate_vector(las, timer):
     
     return final_gs, timer
 
+class DeliveryComparator:
+    def __init__(
+            self,
+            delivery_1_path,
+            delivery_2_path,
+            vector_reference_path,
+            output_path,
+            crs = 'EPSG:2154'
+        ):
+        self.main_input = InputManager(delivery_1_path)
+        self.secondary_input = InputManager(delivery_2_path)
+
 if __name__ == '__main__':
     timer = Timer()
-    root = Path(__file__).parents[1] / 'tmp' / 'compare_deliveries'
-    main_input_path = root / 'delivery_1' / 'laz'
-    secondary_input_path = root / 'delivery_2' / 'laz'
+
+    root = Path(__file__).resolve().parents[2] / 'tmp' / 'compare_deliveries'
+    
+    main_input_path = root / 'delivery_1' / 'laz' / '921000_6541000.laz'
+    secondary_input_path = root / 'delivery_2' / 'laz' / '921000_6541000.laz'
+    vector_reference_path = root / 'delivery_1' / 'report' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
+    output_path = root / 'output'
+    crs = 'EPSG:2154'
+    
+    output_path.mkdir(exist_ok=True)
+
     main_input = InputManager(main_input_path)
     secondary_input = InputManager(secondary_input_path)
-    output_path = root / 'output'
-    output_path.mkdir(exist_ok=True)
+    
+    
 
     for path in main_input:
         print(f"{timer} | Reading {path}")
@@ -60,7 +95,8 @@ if __name__ == '__main__':
         vector_data, timer = generate_vector(cc_las, timer)
         print(f"{timer} | Writing to SHP")
         vector_data.to_file(
-            output_path / f'change_map_{path.stem}.shp'
+            output_path / f'change_map_{path.stem}.shp',
+            crs=crs
         )
         print(f"{timer} | Done")
     
