@@ -56,9 +56,16 @@ class ErrorCloud(LASProcess):
                     the errors in a new point record.
         """
         las_classif = self.remove_virtual_points(las.classification)
-        las_ref_classif = np.vectorize(self.map_awaited.get)(
-            self.remove_virtual_points(las_ref.classification)
-        )
+        las_ref_classif_raw = self.remove_virtual_points(las_ref.classification)
+        try:
+            las_ref_classif = np.vectorize(self.map_awaited.get)( las_ref_classif_raw )
+        except Exception:
+            enc_vals = np.unique(las_ref_classif_raw)
+            poss_keys = list(self.map_awaited.keys())
+            missing = [k for k in enc_vals if k not in poss_keys]
+            raise KeyError(
+                f"The following values have been encountered: {missing}, "
+                f"But no corresponding key in 'map_awaited' exists: {poss_keys}")
         print('sizes after adjustments', len(las_classif), len(las_ref_classif))
         print('unique values after adjustments', np.unique(las_classif), np.unique(las_ref_classif))
         assert len(las_classif) == len(las_ref_classif)
