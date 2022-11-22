@@ -6,7 +6,7 @@ import geopandas as gpd
 from pathlib import Path
 from datetime import datetime
 from datetime import timedelta
-from shapely.geometry import Point
+from shapely.geometry import Point, Polygon
 
 from lastricks.qc import ErrorCloud
 from lastricks.core import InputManager
@@ -68,7 +68,9 @@ class DeliveryComparator:
             'nb_changes': [],
             'nb_expected_changes': [],
             'coverage_expected_changes_%': [],
-            'nb_missing_changes': []
+            'nb_missing_changes': [],
+            'nb_pts_delivery_1': [],
+            'nb_pts_delivery_2': []
         }
 
     def generate_vector(self, las):
@@ -94,7 +96,7 @@ class DeliveryComparator:
         final_gdf['error_type'] = 'Unknown'
         return final_gdf
     
-    def get_local_ref(self, tile_name):
+    def get_bbox(self, tile_name):
         try:
             xmin, ymax = [int(v) for v in tile_name.split('_')]
         except Exception:
@@ -104,6 +106,21 @@ class DeliveryComparator:
             )
         xmax = xmin + 1000
         ymin = ymax - 1000
+        return xmin, xmax, ymin, ymax
+    
+    def get_bbox_polyg(self, tile_name):
+        xmin, xmax, ymin, ymax = self.get_bbox(tile_name)
+        bbox_polyg = Polygon([
+            Point(xmin,ymin),
+            Point(xmin,ymax),
+            Point(xmax,ymax),
+            Point(xmax,ymin),
+            Point(xmin,ymin)
+        ])
+        return bbox_polyg
+
+    def get_local_ref(self, tile_name):
+        xmin, xmax, ymin, ymax = self.get_bbox(tile_name)
         return self.ref.cx[xmin:xmax, ymin:ymax]
 
     def intersection_masks(self, local_ref, cc_vect):
@@ -121,8 +138,6 @@ class DeliveryComparator:
             )
         return inter_masks
     
-
-            
 
     def compute_stats(
         self,
@@ -150,14 +165,13 @@ class DeliveryComparator:
                 )
             # Recording missing change
             missing_mask = [not any(mask) for mask in i_masks]
-            missing_changes.append( local_ref[et_mask][missing_mask] )
+            missing_changes.append( local_ref.loc[missing_mask,et_mask] )
             # Recording error type
-            cc_vect['error_type'][sum(i_masks).astype(bool)] = et
+            cc_vect.loc[sum(i_masks).astype(bool),'error_type'] = et
             local_inter.append(np.sum(i_masks)>0)
         
-        nb_inter = sum(
-                local_inter
-            )
+        nb_inter = sum( local_inter )
+
         self.stats['index'].append( tile_name )
         self.stats['nb_changes'].append( len(cc_vect) )
         self.stats['nb_expected_changes'].append( len(local_ref) )
@@ -168,6 +182,17 @@ class DeliveryComparator:
             return cc_vect, pd.concat(missing_changes)
         else:
             return cc_vect, missing_changes
+    
+    def set_stats_mismatch(self, tile_name):
+        self.stats['index'].append( tile_name )
+        self.stats['nb_changes'].append( 0 )
+        self.stats['nb_expected_changes'].append( 0 )
+        self.stats['coverage_expected_changes_%'].append( 0 )
+        self.stats['nb_missing_changes'].append( 0 )
+
+    def record_file_size(self, las_d1, las_d2):
+        self.stats['nb_pts_delivery_1'].append( len(las_d1) )
+        self.stats['nb_pts_delivery_2'].append( len(las_d2) )
 
     def produce_report(self):
         report_out = self.output_path / 'comparison_report'
@@ -175,9 +200,9 @@ class DeliveryComparator:
 
         # Stats per file
         stats_df = pd.DataFrame( data=self.stats )
-        stats_df.to_csv(report_out / 'stats_per_file.csv', mode='w')
+        stats_df.to_csv(report_out / 'stats_per_file.csv', sep=';', mode='w')
 
-        # Summary
+        # Stats summary
         stats_summary = {
             'index': ['TOTAL'],
             'nb_changes': [sum(self.stats['nb_changes'])],
@@ -186,33 +211,44 @@ class DeliveryComparator:
             'nb_missing_changes':[sum(self.stats['nb_missing_changes'])]
         }
         stats_sum_df = pd.DataFrame( data=stats_summary )
-        stats_sum_df.to_csv(report_out / 'stats_summary.csv', mode='w')
+        stats_sum_df.to_csv(report_out / 'stats_summary.csv', sep=';', mode='w')
 
     def compare(self):
         for path in self.main_input:
-            if not (output_path / f'change_map_{path.stem}.shp').exists():
+            if not (self.output_path / f'change_map_{path.stem}.shp').exists():
                 try:
                     self.log(f"Reading {path}")
-                    las = self.main_input.query_las(path)
-                    gt_las = self.secondary_input.query_las(path)
+                    las_d1 = self.main_input.query_las(path)
+                    las_d2 = self.secondary_input.query_las(path)
                     
-                    self.log("Computing change cloud...")
-                    cc_las = change_cloud(las, gt_las)
-                    cc_vect = self.generate_vector(cc_las)
+                    if len(las_d1) != len(las_d2):
+                        bbox_polyg = self.get_bbox_polyg(path.stem)
+                        cc_vect = gpd.GeoDataFrame(geometry=[bbox_polyg], crs=self.crs)
+                        cc_vect['error_type'] = 'nb_points_mismatch'
+                        self.set_stats_mismatch(path.stem)
+                    else:
+                        self.log("Computing change cloud...")
+                        cc_las = change_cloud(las_d1, las_d2)
+                        cc_vect = self.generate_vector(cc_las)
                     
-                    self.log("Computing stats...")
-                    cc_vect, missing_changes = self.compute_stats(path.stem, cc_vect)
+                        self.log("Computing stats...")
+                        cc_vect, missing_changes = self.compute_stats(path.stem, cc_vect)
+                        
+                        self.log("Writing missing changes to SHP")
+                        if len(missing_changes) > 0:
+                            missing_changes.to_file(
+                                self.output_path / 'missing_changes' / f'missing_changes_{path.stem}.shp',
+                                crs=self.crs
+                            )
 
-                    self.log("Writing to SHP")
+                    self.record_file_size(las_d1, las_d2)
+
+                    self.log("Writing changes to SHP")
                     cc_vect.to_file(
-                        output_path / f'change_map_{path.stem}.shp',
+                        self.output_path / f'change_map_{path.stem}.shp',
                         crs=self.crs
                     )
-                    if len(missing_changes) > 0:
-                        missing_changes.to_file(
-                            output_path / 'missing_changes' / f'missing_changes_{path.stem}.shp',
-                            crs=self.crs
-                        )
+                    
                     
                     self.log("Producing report")
                     self.produce_report()
@@ -233,16 +269,17 @@ class DeliveryComparator:
 if __name__ == '__main__':
 
 
-    root = Path("/mnt/share/00 Lidar - AI/Input data/12_Subcontractor_AREA1_PK")
-    delivery_1_path = root / '03_Back2020909'
-    delivery_2_path = root / '04_Back20220928' / 'laz'
-    vect_ref_path = root / '03_Back2020909' / 'raport' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
-    # root = Path(__file__).resolve().parents[2] / 'tmp' / 'compare_deliveries'
-    # delivery_1_path = root / 'delivery_1' / 'laz'
-    # delivery_2_path = root / 'delivery_2' / 'laz'
-    # vect_ref_path = root / 'delivery_1' / 'report' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
+    # root = Path("/mnt/share/00 Lidar - AI/Input data/12_Subcontractor_AREA1_PK")
+    # delivery_1_path = root / '03_Back2020909'
+    # delivery_2_path = root / '04_Back20220928' / 'laz'
+    # vect_ref_path = root / '03_Back2020909' / 'raport' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
     
-    output_path = Path(__file__).parent / 'output'
+    root = Path(r"X:\00 Lidar - AI\Input data\999_TESTING\03_compare_deliveries")
+    delivery_1_path = root / 'delivery_1' / 'laz'
+    delivery_2_path = root / 'delivery_2' / 'laz'
+    vect_ref_path = root / 'delivery_1' / 'report' / 'FR_038_3_Block_PK_AREA1_Naskatech_20220922.gpkg'
+    output_path = root / 'output'
+    
     crs = 'EPSG:2154'
 
     delivery_comparator = DeliveryComparator(
@@ -252,4 +289,5 @@ if __name__ == '__main__':
         output_path,
         crs = crs
     )
+
     delivery_comparator.compare()
