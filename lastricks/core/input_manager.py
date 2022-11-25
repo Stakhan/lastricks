@@ -26,7 +26,7 @@ class InputManager:
             ]
         if len(results) == 0:
             raise FileNotFoundError(
-                f"Couldn't find any LAS file matching {query_path.stem}"
+                f"Couldn't find any LAS file matching {query_path.stem} in {self.input_path}"
                 )
         elif len(results) == 1:
             return results[0]
