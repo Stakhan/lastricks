@@ -4,8 +4,8 @@ from laspy import LasData
 
 class InputManager:
     def __init__(self, input_path: Path) -> None:
-        assert input_path.exists()
-        self.input_path = input_path
+        self.input_path = Path(input_path)
+        assert self.input_path.exists()
         self.las_paths = self.get_las_paths()
     
     def get_las_paths(self) -> list:
