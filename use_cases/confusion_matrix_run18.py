@@ -32,9 +32,9 @@ def log(msg):
 
 if __name__ == '__main__':
 
-    input_dl = InputManager(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/01_BlockPP_10p_ai/ai_pred_run4")
+    input_dl = InputManager(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/01_BlockPP_10p_ai/ai_pred_run18")
     input_tscan = InputManager(r"/mnt/share/00 Lidar - AI/Input data/14_BlocPP_10p/TerraScanAuto10%")
-    output_path = Path(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/01_BlockPP_10p_ai/comp_tscan/run4_vs_tscan")
+    output_path = Path(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/01_BlockPP_10p_ai/comp_tscan/run18_vs_tscan")
 
     cms = {}
     cmdf = pd.DataFrame(index=cls_id, columns=cls_id)
