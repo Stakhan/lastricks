@@ -40,7 +40,9 @@ if __name__ == '__main__':
     cmdf = pd.DataFrame(index=cls_id, columns=cls_id)
     cmdf[:] = 0
     for path in input_tscan:
-        if not (output_path / 'per_tile' / f'cm_{path.stem}.npy').exists():
+        if not len(
+            list((output_path / 'per_tile').glob(f'cm_{path.stem}*.npy'))
+            ) > 0:
             try:
                 cx, cy = path.stem.split('_')
                 log(f"Reading {path.name}...")
@@ -70,13 +72,15 @@ if __name__ == '__main__':
                 log("Done")
 
             except Exception as e:
-                    if False:
-                        print(f"{e.__class__.__name__} when trying to process {path.name}")
-                        (input_tscan.input_path / 'rejected').mkdir(exist_ok=True)
-                        shutil.move(
-                            input_tscan.input_path / path.name,
-                            input_tscan.input_path / 'rejected' / path.name
-                        )
-                        continue
-                    else:
-                        raise e
+                if True:
+                    print(f"{e.__class__.__name__} when trying to process {path.name}")
+                    (input_tscan.input_path / 'rejected').mkdir(exist_ok=True)
+                    shutil.move(
+                        input_tscan.input_path / path.name,
+                        input_tscan.input_path / 'rejected' / path.name
+                    )
+                    continue
+                else:
+                    raise e
+        else:
+            log(f"Skipping {path.name}...")
