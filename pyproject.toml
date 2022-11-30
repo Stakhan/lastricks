@@ -1,24 +1,37 @@
-[tool.poetry]
+[project]
 name = "lastricks"
 version = "0.1.3"
 description = "A few LAS manipulations"
-authors = ["Elie-Alban LESCOUT <elie-alban.lescout@eurosense.com>"]
+authors = [{name="Elie-Alban LESCOUT, email=<elie-alban.lescout@eurosense.com>"}]
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "laspy==2.2.*",
+    "laszip==0.1.0",
+    "rasterio==1.3.*",
+    "numpy==1.23.*",
+    "pathos",
+    "geopandas==0.11.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-pytest = "^6.2"
-laspy =  "^2.0"
-laszip = "^0.1"
-rasterio = "^1.2"
-numpy = "^1.22"
-Shapely = "^1.8"
-pathos = "^0.2"
+[optional-dependencies]
+pytest = "6.2.*"
 
-[tool.poetry.dev-dependencies]
+
+[project.urls]
+"Homepage" = "https://github.com/Stakhan/lastricks"
+"Bug Tracker" = "https://github.com/Stakhan/lastricks/issues"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["lastricks"]
 
 [tool.pytest.ini_options]
 filterwarnings = [
