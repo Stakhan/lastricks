@@ -1,0 +1,44 @@
+package:
+  name: lastricks
+  version: "0.1.3"
+
+source:
+  git_url: https://github.com/Stakhan/lastricks.git
+  git_rev: 0.1.3
+
+
+build:
+  noarch: python
+  script: "{{PYTHON}} -m pip install . -vv"
+
+requirements:
+  host:
+    - python 3.10
+    - pip 22
+    - setuptools>=61.0
+    - numpy 1.23.*
+    - geopandas 0.11.*
+    #- rasterio 1.3.*
+  build:
+    - git
+  run:
+    - python 3.10
+    - laspy 2.2.*
+    - laszip 3.4.*
+    - pathos 0.3.*
+    - {{ pin_compatible('numpy') }}
+    - geopandas 0.11.*
+
+
+test:
+  imports:
+    - lastricks
+    # - geopandas
+  # requires:
+  #   - pytest
+  # commands:
+  #   - pytest test/ -rP
+
+about:
+  home: https://github.com/Stakhan/lastricks
+  summary: A few LAS manipulations
