@@ -27,6 +27,11 @@ It can also handle sets of input LAS/LAZ files; in that case, it is implied that
 | [`analysis`](lastricks/analysis) | in progress | <ul><li>[ ] Classification/Segmentation Metrics Summary</li></ul> |
 
 ## Installation <a name = "installation"></a>
+### Conda
+```
+conda install lastricks -c eal -c conda-forge
+```
+### Development
 1. Clone the repository:
 ```
 git clone https://github.com/Stakhan/lastricks
