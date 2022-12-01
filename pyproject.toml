@@ -2,7 +2,7 @@
 name = "lastricks"
 version = "0.1.3"
 description = "A few LAS manipulations"
-authors = [{name="Elie-Alban LESCOUT", email="elie-alban.lescout@eurosense.com>"}]
+authors = [{name="Elie-Alban LESCOUT", email="elie-alban.lescout@eurosense.com"}]
 readme = "README.md"
 requires-python = ">=3.10"
 classifiers = [
