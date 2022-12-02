@@ -20,13 +20,18 @@ It can also handle sets of input LAS/LAZ files; in that case, it is implied that
 
 | Development                      | Status      | Feature                                                                |
 | -------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| [`core`](lastricks/core)         | finished    | <ul><li>[x] LASProcessor</li><li>[x] LASProcess</li></ul> |
+| [`core`](lastricks/core)         | finished    | <ul><li>[x] LASProcessor</li><li>[x] LASProcess</li><li>[x] InputManager</li></ul> |
 | [`cleaning`](lastricks/cleaning) | finished    | <ul><li>[x] New Class From GeoPackage</li><li>[x] Reclassify Above</li></ul> |
 | [`qc`](lastricks/qc)             | finished    | <ul><li>[x] Error Cloud</li></ul> |
 | [`las2las`](lastricks/las2las)   | finished    | <ul><li>[x] CopyField </li></ul> |
 | [`analysis`](lastricks/analysis) | in progress | <ul><li>[ ] Classification/Segmentation Metrics Summary</li></ul> |
 
 ## Installation <a name = "installation"></a>
+### Conda
+```
+conda install lastricks -c eal -c conda-forge
+```
+### Development
 1. Clone the repository:
 ```
 git clone https://github.com/Stakhan/lastricks
