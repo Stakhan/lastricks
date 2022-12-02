@@ -1,6 +1,8 @@
 import numpy as np
 from laspy import LasData, ExtraBytesParams
 from ..core import LASProcessor, LASProcess
+from .adjust_classification import remove_virtual_points
+
 
 class ErrorCloud(LASProcess):
     def __init__(
@@ -55,8 +57,8 @@ class ErrorCloud(LASProcess):
                 laspy.LasData: same as `las` but with an error mask highlighting
                     the errors in a new point record.
         """
-        las_classif = self.remove_virtual_points(las.classification)
-        las_ref_classif_raw = self.remove_virtual_points(las_ref.classification)
+        las_classif = remove_virtual_points(las.classification)
+        las_ref_classif_raw = remove_virtual_points(las_ref.classification)
         try:
             las_ref_classif = np.vectorize(self.map_awaited.get)( las_ref_classif_raw )
         except Exception:
@@ -82,15 +84,6 @@ class ErrorCloud(LASProcess):
         
         las['error_mask'] = np.vectorize(self.matcher.get)( mask )
         return las
-
-    def remove_virtual_points(self, classification):
-        classification = np.array(classification)
-        if 66 in classification:
-            mask = classification != 66
-            print(f"Removing {sum(~mask)} virtual points")
-            return classification[ mask ]
-        else:
-            return classification
 
     def get_type(self):
         return LASProcessType.DoubleInput
