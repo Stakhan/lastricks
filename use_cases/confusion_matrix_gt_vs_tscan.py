@@ -1,3 +1,4 @@
+import shutil
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -6,10 +7,12 @@ from lastricks.core import InputManager
 #from lastricks.core.utils import Timer
 from sklearn.metrics import confusion_matrix
 
-map_cls_to_names = { 1 : 'Unclassified',
+map_cls_to_names = { 0 : 'Never Classified',
+                     1 : 'Unclassified',
                      2 : 'Ground',
-                     3 : 'Vegetation',
-                     4 : 'Vegetation',
+                     3 : 'Low Vegetation',
+                     4 : 'Medium Vegetation',
+                     5 : 'High Vegetation',
                      6 : 'Building',
                      9 : 'Water',
                      14: 'Wire - Conductor',
@@ -32,9 +35,13 @@ def log(msg):
 
 if __name__ == '__main__':
 
-    input_dl = InputManager(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/01_BlockPP_10p_ai/ai_pred_run4")
-    input_tscan = InputManager(r"/mnt/share/00 Lidar - AI/Input data/14_BlocPP_10p/TerraScanAuto10%")
-    output_path = Path(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/01_BlockPP_10p_ai/comp_tscan/run4_vs_tscan")
+    input_gt = InputManager(r"/mnt/share/00 Lidar - AI/Input data/15_BlockPK_10p/03_final_delivery")
+    input_tscan = InputManager(r"/mnt/share/00 Lidar - AI/Input data/15_BlockPK_10p/02_auto_tscan")
+    output_path = Path(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/02_BlockPK_10p_stats/gt_vs_tscan")
+
+    # Patterns
+    # tscan: 921000_6538000
+    # ground truth: Semis_2021_0906_6534_LA93_IGN69
 
     cms = {}
     cmdf = pd.DataFrame(index=cls_id, columns=cls_id)
@@ -47,11 +54,12 @@ if __name__ == '__main__':
                 cx, cy = path.stem.split('_')
                 log(f"Reading {path.name}...")
                 tscan = input_tscan.query_las(path)
-                dl_path = input_dl.input_path / (
-                    f"Semis_2021_{int(float(cx)/1e3):04d}_"
-                    f"{int(float(cy)/1e3):04d}_LA93_IGN69_pred.laz")
+                pattern_gt = (f"Semis_2021_{int(float(cx)/1e3):04d}_"
+                             f"{int(float(cy)/1e3):04d}_LA93_IGN69.laz")
+                print(f"Pattern gt: {pattern_gt}")
+                dl_path = input_gt.input_path / pattern_gt
                 log(f"Reading  {dl_path.name}...")
-                dl = input_dl.query_las(dl_path)
+                dl = input_gt.query_las(dl_path)
 
                 classes = np.unique(np.concatenate(
                     (np.array(tscan.classification),
