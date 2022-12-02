@@ -23,7 +23,7 @@ requirements:
   run:
     - python 3.10
     - laspy 2.2.*
-    - laszip 3.4.*
+    - laszip
     - pathos 0.3.*
     - geopandas 0.11.*
 
