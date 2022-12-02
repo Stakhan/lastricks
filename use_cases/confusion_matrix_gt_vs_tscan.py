@@ -5,7 +5,7 @@ from pathlib import Path
 from datetime import datetime
 from lastricks.core import InputManager
 from sklearn.metrics import confusion_matrix
-from lastricks.qc import ErrorCloud, remove_virtual_points
+from lastricks.qc import remove_virtual_points
 #from lastricks.core.utils import Timer
 
 map_cls_to_names = { 0 : 'Never Classified',
@@ -23,8 +23,6 @@ map_cls_to_names = { 0 : 'Never Classified',
                      66: 'Virtual Points' }
 names = list(map_cls_to_names.values())
 cls_id = list(map_cls_to_names.keys())
-
-ec = ErrorCloud()
 
 class Timer:
     def __init__(self):
