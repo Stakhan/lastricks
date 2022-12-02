@@ -12,5 +12,6 @@ Inside this directory:
 python compare_deliveries.py \
             -d1 <path_to_delivery_1> \
             -d2 <path_to_delivery_2> \
-            -e <path_to_errors_in_delivery_1>
+            -e <path_to_errors_in_delivery_1> \
+            -o <path_to_output>
 ```

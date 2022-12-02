@@ -67,8 +67,9 @@ class DeliveryComparator:
             'index': [],
             'nb_changes': [],
             'nb_expected_changes': [],
+            'nb_expected_changes_covered': [],
+            'nb_expected_changes_missing': [],
             'coverage_expected_changes_%': [],
-            'nb_missing_changes': [],
             'nb_pts_delivery_1': [],
             'nb_pts_delivery_2': []
         }
@@ -96,7 +97,7 @@ class DeliveryComparator:
         final_gdf['error_type'] = 'Unknown'
         return final_gdf
     
-    def get_bbox(self, tile_name):
+    def get_bbox(self, tile_name, tile_size=1000):
         try:
             xmin, ymax = [int(v) for v in tile_name.split('_')]
         except Exception:
@@ -104,8 +105,8 @@ class DeliveryComparator:
                 f"{tile_name} is not a valid name to proceed. "
                 "Must be of form '<xmin>_<ymax>'."
             )
-        xmax = xmin + 1000
-        ymin = ymax - 1000
+        xmax = xmin + tile_size
+        ymin = ymax - tile_size
         return xmin, xmax, ymin, ymax
     
     def get_bbox_polyg(self, tile_name):
@@ -176,7 +177,8 @@ class DeliveryComparator:
         self.stats['nb_changes'].append( len(cc_vect) )
         self.stats['nb_expected_changes'].append( len(local_ref) )
         self.stats['coverage_expected_changes_%'].append( nb_inter / len(local_ref) * 100 if len(local_ref) > 0 else 100 )
-        self.stats['nb_missing_changes'].append( len(local_ref) - nb_inter )
+        self.stats['nb_expected_changes_covered'].append( nb_inter )
+        self.stats['nb_expected_changes_missing'].append( len(local_ref) - nb_inter )
 
         if len(missing_changes) > 0:
             return cc_vect, pd.concat(missing_changes)
@@ -188,7 +190,8 @@ class DeliveryComparator:
         self.stats['nb_changes'].append( 0 )
         self.stats['nb_expected_changes'].append( 0 )
         self.stats['coverage_expected_changes_%'].append( 0 )
-        self.stats['nb_missing_changes'].append( 0 )
+        self.stats['nb_expected_changes_missing'].append( 0 )
+        self.stats['nb_expected_changes_covered'].append( 0 )
 
     def record_file_size(self, las_d1, las_d2):
         self.stats['nb_pts_delivery_1'].append( len(las_d1) )
@@ -208,7 +211,8 @@ class DeliveryComparator:
             'nb_changes': [sum(self.stats['nb_changes'])],
             'nb_expected_changes': [sum(self.stats['nb_expected_changes'])],
             'coverage_expected_changes_%': [np.mean(self.stats['coverage_expected_changes_%'])],
-            'nb_missing_changes':[sum(self.stats['nb_missing_changes'])]
+            'nb_expected_changes_missing':[sum(self.stats['nb_expected_changes_missing'])],
+            'nb_expected_changes_covered':[sum(self.stats['nb_expected_changes_covered'])],
         }
         stats_sum_df = pd.DataFrame( data=stats_summary )
         stats_sum_df.to_csv(report_out / 'stats_summary.csv', sep=';', mode='w')
