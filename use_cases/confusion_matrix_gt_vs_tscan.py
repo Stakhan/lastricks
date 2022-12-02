@@ -4,8 +4,9 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 from lastricks.core import InputManager
-#from lastricks.core.utils import Timer
 from sklearn.metrics import confusion_matrix
+from lastricks.qc import ErrorCloud, remove_virtual_points
+#from lastricks.core.utils import Timer
 
 map_cls_to_names = { 0 : 'Never Classified',
                      1 : 'Unclassified',
@@ -23,6 +24,8 @@ map_cls_to_names = { 0 : 'Never Classified',
 names = list(map_cls_to_names.values())
 cls_id = list(map_cls_to_names.keys())
 
+ec = ErrorCloud()
+
 class Timer:
     def __init__(self):
         self.start_time = datetime.now()
@@ -36,7 +39,7 @@ def log(msg):
 if __name__ == '__main__':
 
     input_gt = InputManager(r"/mnt/share/00 Lidar - AI/Input data/15_BlockPK_10p/03_final_delivery")
-    input_tscan = InputManager(r"/mnt/share/00 Lidar - AI/Input data/15_BlockPK_10p/02_auto_tscan")
+    input_tscan = InputManager(r"/mnt/share/00 Lidar - AI/Input data/15_BlockPK_10p/02_auto_tscan/rejected")
     output_path = Path(r"/mnt/share/00 Lidar - AI/Result/01_FR_LiDAR_HD/01_production/02_BlockPK_10p_stats/gt_vs_tscan")
 
     # Patterns
@@ -44,8 +47,6 @@ if __name__ == '__main__':
     # ground truth: Semis_2021_0906_6534_LA93_IGN69
 
     cms = {}
-    cmdf = pd.DataFrame(index=cls_id, columns=cls_id)
-    cmdf[:] = 0
     for path in input_tscan:
         if not len(
             list((output_path / 'per_tile').glob(f'cm_{path.stem}*.npy'))
@@ -60,23 +61,22 @@ if __name__ == '__main__':
                 dl_path = input_gt.input_path / pattern_gt
                 log(f"Reading  {dl_path.name}...")
                 dl = input_gt.query_las(dl_path)
+                
+                tscan_classif = remove_virtual_points(tscan.classification)
+                dl_classif = remove_virtual_points(dl.classification)
 
                 classes = np.unique(np.concatenate(
-                    (np.array(tscan.classification),
-                    np.array(dl.classification))
+                    (np.array(tscan_classif),
+                    np.array(dl_classif))
                 ))
                 print(classes)
                 log(f"Computing confusion matrix...")
-                cm = confusion_matrix(tscan.classification, dl.classification)
-                for i_cm,i in enumerate(classes):
-                    for j_cm,j in enumerate(classes):
-                        cmdf.at[i,j] += cm[i_cm,j_cm]
+                cm = confusion_matrix(tscan_classif, dl_classif)
                 (output_path / 'per_tile').mkdir(exist_ok=True)
                 np.save(
                     output_path / 'per_tile' / f'cm_{path.stem}_{"-".join([str(c) for c in classes])}.npy',
                     cm
                 )
-                cmdf.to_csv(output_path / 'cm_total.csv', sep=';', mode='w')
                 log("Done")
 
             except Exception as e:
