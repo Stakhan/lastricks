@@ -14,6 +14,7 @@ conda install mamba
 ```
 Inside this directory:
 ```
+conda install boa -c conda-forge
 conda mambabuild . -c conda-forge
 ```
 
