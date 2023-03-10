@@ -55,8 +55,8 @@ class ErrorCloud(LASProcess):
                 laspy.LasData: same as `las` but with an error mask highlighting
                     the errors in a new point record.
         """
-        las_classif = remove_virtual_points(las.classification)
-        las_ref_classif_raw = remove_virtual_points(las_ref.classification)
+        las_classif = self.remove_virtual_points(las.classification)
+        las_ref_classif_raw = self.remove_virtual_points(las_ref.classification)
         nb_vrt_pts = len(las.classification) - len(las_classif)
         try:
             las_ref_classif = np.vectorize(self.map_awaited.get)( las_ref_classif_raw )
