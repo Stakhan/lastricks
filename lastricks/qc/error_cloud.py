@@ -55,8 +55,14 @@ class ErrorCloud(LASProcess):
                 laspy.LasData: same as `las` but with an error mask highlighting
                     the errors in a new point record.
         """
+<<<<<<< Updated upstream
         las_classif = self.remove_virtual_points(las.classification)
         las_ref_classif_raw = self.remove_virtual_points(las_ref.classification)
+=======
+        las_classif = remove_virtual_points(las.classification)
+        las_ref_classif_raw = remove_virtual_points(las_ref.classification)
+        nb_vrt_pts = len(las.classification) - len(las_classif)
+>>>>>>> Stashed changes
         try:
             las_ref_classif = np.vectorize(self.map_awaited.get)( las_ref_classif_raw )
         except Exception:
@@ -79,8 +85,11 @@ class ErrorCloud(LASProcess):
                     description=f"Binary error mask"
             )
         )
-        
-        las['error_mask'] = np.vectorize(self.matcher.get)( mask )
+
+        las['error_mask'] = np.concatenate((
+            np.vectorize(self.matcher.get)( mask ),
+            np.full((nb_vrt_pts,), self.matcher[False], dtype=int)
+        ))
         return las
 
     def remove_virtual_points(self, classification):
