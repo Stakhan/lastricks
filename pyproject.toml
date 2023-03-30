@@ -15,7 +15,7 @@ dependencies = [
 #    "rasterio==1.3.*",
     "numpy==1.23.*",
     "pathos",
-    "geopandas==0.11.*",
+    "geopandas<1.0",
 ]
 
 
