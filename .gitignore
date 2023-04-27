@@ -4,3 +4,6 @@ lastricks/__pycache__
 __pycache__/
 use_cases/data
 .ipynb_checkpoints
+*.egg-info
+build
+tmp
