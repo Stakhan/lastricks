@@ -32,7 +32,8 @@ packages = ["lastricks",
             "lastricks.core",
             "lastricks.qc",
             "lastricks.cleaning",
-            "lastricks.las2las"]
+            "lastricks.las2las",
+            "lastricks.ops"]
 
 [tool.setuptools-git-versioning]
 enabled = true
