@@ -1,6 +1,6 @@
 from laspy import LasData
 
-def concat_las(self, las1: LasData, las2: LasData):
+def concat_las(las1: LasData, las2: LasData):
     hdr1, hdr2 = las1.header, las2.header
     assert hdr1.point_format == hdr2.point_format
     assert all(hdr1.scales == hdr2.scales)  
