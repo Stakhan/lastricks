@@ -1,3 +1,4 @@
+import numpy as np
 from laspy import LasData
 
 def concat_las(las1: LasData, las2: LasData):
