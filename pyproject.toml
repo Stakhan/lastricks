@@ -11,7 +11,7 @@ classifiers = [
 ]
 dependencies = [
     "laspy==2.2.*",
-    "laszip",
+    "lazrs",
 #    "rasterio==1.3.*",
     "numpy==1.*",
     "pathos",
