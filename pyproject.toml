@@ -10,7 +10,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "laspy==2.2.*",
+    "laspy>=2.2",
     "lazrs",
 #    "rasterio==1.3.*",
     "numpy==1.*",
