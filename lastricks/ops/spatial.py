@@ -1,3 +1,4 @@
+from __future__ import annotations
 import laspy
 import numpy as np
 from pathlib import Path
